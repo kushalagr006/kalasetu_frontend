@@ -327,7 +327,7 @@ export default function ProfileScreen() {
           {/* Tab 2: Products */}
           <TouchableOpacity
             style={styles.navTab}
-            onPress={() => alert(t.navProducts)}
+            onPress={() => router.push({ pathname: '/products', params: { lang: selectedLang } })}
             activeOpacity={0.7}
           >
             <Ionicons name="cube-outline" size={22} color="#666666" />
@@ -337,7 +337,7 @@ export default function ProfileScreen() {
           {/* Tab 3: Customers */}
           <TouchableOpacity
             style={styles.navTab}
-            onPress={() => alert(t.navCustomers)}
+            onPress={() => router.push({ pathname: '/customers', params: { lang: selectedLang } })}
             activeOpacity={0.7}
           >
             <Ionicons name="people-outline" size={22} color="#666666" />

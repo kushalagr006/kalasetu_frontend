@@ -287,7 +287,7 @@ export default function HomeScreen() {
           {/* Tab 2: Products */}
           <TouchableOpacity
             style={styles.navTab}
-            onPress={() => setActiveTab('products')}
+            onPress={() => router.push({ pathname: '/products', params: { lang: selectedLang } })}
             activeOpacity={0.7}
           >
             <Ionicons
@@ -308,7 +308,7 @@ export default function HomeScreen() {
           {/* Tab 3: Customers */}
           <TouchableOpacity
             style={styles.navTab}
-            onPress={() => setActiveTab('customers')}
+            onPress={() => router.push({ pathname: '/customers', params: { lang: selectedLang } })}
             activeOpacity={0.7}
           >
             <Ionicons

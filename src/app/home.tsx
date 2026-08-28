@@ -131,7 +131,7 @@ export default function HomeScreen() {
 
             <TouchableOpacity
               style={styles.notificationButton}
-              onPress={() => alert(t.notificationAlert)}
+              onPress={() => router.push({ pathname: '/notifications', params: { lang: selectedLang } })}
               activeOpacity={0.7}
             >
               <Ionicons name="notifications-outline" size={26} color="#1A1A1A" />

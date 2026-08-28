@@ -1,0 +1,805 @@
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  StatusBar,
+  Platform,
+  Modal,
+  FlatList,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons, Feather } from '@expo/vector-icons';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+
+type LangCode = 'hi' | 'en';
+type ActiveTab = 'home' | 'products' | 'customers' | 'profile';
+
+const LANGUAGES: { code: LangCode; label: string }[] = [
+  { code: 'hi', label: 'हिंदी' },
+  { code: 'en', label: 'English' },
+];
+
+const TRANSLATIONS: Record<LangCode, {
+  greeting: string;
+  addProduct: string;
+  yourProducts: string;
+  totalProducts: string;
+  totalOrders: string;
+  salesTillDate: string;
+  recentOrders: string;
+  viewAll: string;
+  order1Title: string;
+  order1Sub: string;
+  order2Title: string;
+  order2Sub: string;
+  tipTitle: string;
+  tipBody: string;
+  navHome: string;
+  navProducts: string;
+  navCustomers: string;
+  navProfile: string;
+  modalTitle: string;
+  notificationAlert: string;
+  addProductAlert: string;
+}> = {
+  hi: {
+    greeting: 'नमस्ते, सुनीता जी 👋',
+    addProduct: 'नया उत्पाद जोड़ें',
+    yourProducts: 'आपके उत्पाद',
+    totalProducts: 'कुल उत्पाद',
+    totalOrders: 'कुल ऑर्डर',
+    salesTillDate: 'आज तक की बिक्री',
+    recentOrders: 'हाल की बिक्री',
+    viewAll: 'सभी देखें',
+    order1Title: 'सजावटी मिट्टी का घड़ा',
+    order1Sub: 'रमेश कुमार • ₹450 • भुगतान पूरा',
+    order2Title: 'हाथ की कढ़ाई का दुपट्टा',
+    order2Sub: 'प्रिया वर्मा • ₹2,000 • भुगतान पूरा',
+    tipTitle: 'बिक्री बढ़ाने का टिप 💡',
+    tipBody: 'अपने 3 सबसे अच्छे उत्पादों की साफ़ फोटो जोड़ें और 2x ज़्यादा ऑर्डर पाएं!',
+    navHome: 'होम',
+    navProducts: 'उत्पाद',
+    navCustomers: 'ग्राहक',
+    navProfile: 'प्रोफाइल',
+    modalTitle: 'भाषा चुनें / Select Language',
+    notificationAlert: 'आपकी 2 नई बिक्री इंक्वायरी मिली हैं!',
+    addProductAlert: 'नया उत्पाद जोड़ने का फॉर्म खुल रहा है...',
+  },
+  en: {
+    greeting: 'Namaste, Sunita Ji 👋',
+    addProduct: 'Add New Product',
+    yourProducts: 'Your Products',
+    totalProducts: 'Total Products',
+    totalOrders: 'Total Orders',
+    salesTillDate: 'Sales Till Date',
+    recentOrders: 'Recent Sales',
+    viewAll: 'View All',
+    order1Title: 'Decorative Clay Pot',
+    order1Sub: 'Ramesh Kumar • ₹450 • Payment Received',
+    order2Title: 'Handmade Embroidered Dupatta',
+    order2Sub: 'Priya Verma • ₹2,000 • Payment Received',
+    tipTitle: 'Sales Growth Tip 💡',
+    tipBody: 'Add clear photos of your 3 best products to get 2x more orders!',
+    navHome: 'Home',
+    navProducts: 'Products',
+    navCustomers: 'Customers',
+    navProfile: 'Profile',
+    modalTitle: 'Select Language / भाषा चुनें',
+    notificationAlert: 'You have 2 new order inquiries!',
+    addProductAlert: 'Opening Add Product Form...',
+  },
+};
+
+export default function HomeScreen() {
+  const router = useRouter();
+  const params = useLocalSearchParams<{ lang?: string }>();
+
+  const initialLang: LangCode = (params.lang as LangCode) || 'hi';
+  const [selectedLang, setSelectedLang] = useState<LangCode>(initialLang);
+  const [isLangModalVisible, setIsLangModalVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState<ActiveTab>('home');
+
+  const t = TRANSLATIONS[selectedLang];
+  const currentLangLabel = LANGUAGES.find((l) => l.code === selectedLang)?.label || 'हिंदी';
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FAF8F5" translucent={false} />
+      <View style={styles.container}>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Top Header: Greeting, Notification Bell, Language Selector */}
+          <View style={styles.headerRow}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.greetingText}>{t.greeting}</Text>
+              <TouchableOpacity
+                style={styles.langSelector}
+                onPress={() => setIsLangModalVisible(true)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.langText}>{currentLangLabel}</Text>
+                <Ionicons name="chevron-down" size={14} color="#2C2C2C" />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={styles.notificationButton}
+              onPress={() => alert(t.notificationAlert)}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="notifications-outline" size={26} color="#1A1A1A" />
+              <View style={styles.redBadgeDot} />
+            </TouchableOpacity>
+          </View>
+
+          {/* Primary CTA Button: Add New Product */}
+          <TouchableOpacity
+            style={styles.addProductButton}
+            onPress={() => alert(t.addProductAlert)}
+            activeOpacity={0.88}
+          >
+            <View style={styles.plusIconCircle}>
+              <Ionicons name="add" size={28} color="#3B6029" />
+            </View>
+            <Text style={styles.addProductText}>{t.addProduct}</Text>
+          </TouchableOpacity>
+
+          {/* Product Statistics Card */}
+          <View style={styles.cardContainer}>
+            <View style={styles.cardHeaderRow}>
+              <Ionicons name="bar-chart" size={20} color="#3B6029" style={{ marginRight: 8 }} />
+              <Text style={styles.cardHeaderTitle}>{t.yourProducts}</Text>
+            </View>
+
+            <View style={styles.statsMetricsRow}>
+              {/* Metric 1: Total Products */}
+              <View style={styles.metricItem}>
+                <View style={[styles.metricIconCircle, { backgroundColor: '#EAF2E8' }]}>
+                  <Ionicons name="cube-outline" size={24} color="#3B6029" />
+                </View>
+                <View style={styles.metricTextGroup}>
+                  <Text style={[styles.metricNumber, { color: '#3B6029' }]}>12</Text>
+                  <Text style={styles.metricLabel}>{t.totalProducts}</Text>
+                </View>
+              </View>
+
+              <View style={styles.verticalDivider} />
+
+              {/* Metric 2: Total Orders */}
+              <View style={styles.metricItem}>
+                <View style={[styles.metricIconCircle, { backgroundColor: '#FFF0E6' }]}>
+                  <Ionicons name="clipboard-outline" size={24} color="#E65100" />
+                </View>
+                <View style={styles.metricTextGroup}>
+                  <Text style={[styles.metricNumber, { color: '#E65100' }]}>3</Text>
+                  <Text style={styles.metricLabel}>{t.totalOrders}</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Sales Summary Card */}
+          <TouchableOpacity style={styles.salesCard} activeOpacity={0.88}>
+            <View style={styles.salesBagCircle}>
+              <Ionicons name="wallet-outline" size={26} color="#4E342E" />
+            </View>
+            <View style={styles.salesTextContainer}>
+              <Text style={styles.salesLabel}>{t.salesTillDate}</Text>
+              <Text style={styles.salesAmount}>₹2,450</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#777777" />
+          </TouchableOpacity>
+
+          {/* Recent Orders Section */}
+          <View style={styles.recentOrdersCard}>
+            <View style={styles.recentHeaderRow}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Ionicons name="trending-up-outline" size={20} color="#3B6029" style={{ marginRight: 6 }} />
+                <Text style={styles.recentHeaderTitle}>{t.recentOrders}</Text>
+              </View>
+              <TouchableOpacity activeOpacity={0.7}>
+                <Text style={styles.viewAllText}>{t.viewAll}</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Order Item 1 */}
+            <View style={styles.orderRowItem}>
+              <View style={styles.orderBadgeCircle}>
+                <Ionicons name="cart-outline" size={22} color="#3B6029" />
+              </View>
+              <View style={styles.orderTextGroup}>
+                <Text style={styles.orderTitle}>{t.order1Title}</Text>
+                <Text style={styles.orderSub}>{t.order1Sub}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#CCCCCC" />
+            </View>
+
+            <View style={styles.orderDividerLine} />
+
+            {/* Order Item 2 */}
+            <View style={styles.orderRowItem}>
+              <View style={[styles.orderBadgeCircle, { backgroundColor: '#FFF0E6' }]}>
+                <Ionicons name="gift-outline" size={22} color="#E65100" />
+              </View>
+              <View style={styles.orderTextGroup}>
+                <Text style={styles.orderTitle}>{t.order2Title}</Text>
+                <Text style={styles.orderSub}>{t.order2Sub}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#CCCCCC" />
+            </View>
+          </View>
+
+          {/* Sales Growth Artisan Tip Card */}
+          <View style={styles.tipCard}>
+            <Text style={styles.tipTitle}>{t.tipTitle}</Text>
+            <Text style={styles.tipBody}>{t.tipBody}</Text>
+          </View>
+
+          {/* Village Line Art Background Overlay */}
+          <View style={styles.sketchWrapper}>
+            <Image
+              source={require('@/assets/images/village_sketch.png')}
+              style={styles.sketchImage}
+              resizeMode="contain"
+            />
+          </View>
+        </ScrollView>
+
+        {/* Floating Action Chat Button */}
+        <TouchableOpacity
+          style={styles.floatingChatButton}
+          onPress={() => alert('सहायता चैट / Help Chat')}
+          activeOpacity={0.85}
+        >
+          <Ionicons name="chatbubble-ellipses" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+
+        {/* Bottom Navigation Bar (4 Tabs) */}
+        <View style={styles.bottomNavContainer}>
+          {/* Tab 1: Home */}
+          <TouchableOpacity
+            style={styles.navTab}
+            onPress={() => setActiveTab('home')}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name={activeTab === 'home' ? 'home' : 'home-outline'}
+              size={22}
+              color={activeTab === 'home' ? '#3B6029' : '#666666'}
+            />
+            <Text
+              style={[
+                styles.navTabText,
+                activeTab === 'home' && styles.navTabTextActive,
+              ]}
+            >
+              {t.navHome}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Tab 2: Products */}
+          <TouchableOpacity
+            style={styles.navTab}
+            onPress={() => setActiveTab('products')}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name={activeTab === 'products' ? 'cube' : 'cube-outline'}
+              size={22}
+              color={activeTab === 'products' ? '#E65100' : '#666666'}
+            />
+            <Text
+              style={[
+                styles.navTabText,
+                activeTab === 'products' && styles.navTabTextActiveProduct,
+              ]}
+            >
+              {t.navProducts}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Tab 3: Customers */}
+          <TouchableOpacity
+            style={styles.navTab}
+            onPress={() => setActiveTab('customers')}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name={activeTab === 'customers' ? 'people' : 'people-outline'}
+              size={22}
+              color={activeTab === 'customers' ? '#5E35B1' : '#666666'}
+            />
+            <Text
+              style={[
+                styles.navTabText,
+                activeTab === 'customers' && styles.navTabTextActiveCustomer,
+              ]}
+            >
+              {t.navCustomers}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Tab 4: Profile */}
+          <TouchableOpacity
+            style={styles.navTab}
+            onPress={() => setActiveTab('profile')}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name={activeTab === 'profile' ? 'person' : 'person-outline'}
+              size={22}
+              color={activeTab === 'profile' ? '#1976D2' : '#666666'}
+            />
+            <Text
+              style={[
+                styles.navTabText,
+                activeTab === 'profile' && styles.navTabTextActiveProfile,
+              ]}
+            >
+              {t.navProfile}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Language Selection Modal */}
+        <Modal
+          visible={isLangModalVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setIsLangModalVisible(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setIsLangModalVisible(false)}
+          >
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>{t.modalTitle}</Text>
+              <FlatList
+                data={LANGUAGES}
+                keyExtractor={(item) => item.code}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={[
+                      styles.langOption,
+                      selectedLang === item.code && styles.langOptionSelected,
+                    ]}
+                    onPress={() => {
+                      setSelectedLang(item.code);
+                      setIsLangModalVisible(false);
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.langOptionText,
+                        selectedLang === item.code && styles.langOptionTextSelected,
+                      ]}
+                    >
+                      {item.label}
+                    </Text>
+                    {selectedLang === item.code && (
+                      <Ionicons name="checkmark-circle" size={20} color="#3B6029" />
+                    )}
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          </TouchableOpacity>
+        </Modal>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FAF8F5',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#FAF8F5',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 24,
+  },
+  /* Header Row */
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ? 8 : 12) : 8,
+    paddingBottom: 16,
+  },
+  headerLeft: {
+    flex: 1,
+  },
+  greetingText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+    marginBottom: 6,
+  },
+  langSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E0D8',
+    borderRadius: 16,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+  langText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#2C2C2C',
+    marginRight: 4,
+  },
+  notificationButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#EFEFEA',
+    elevation: 1,
+  },
+  redBadgeDot: {
+    position: 'absolute',
+    top: 9,
+    right: 10,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FF3B30',
+  },
+  /* Primary CTA: Add Product */
+  addProductButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#3B6029',
+    borderRadius: 16,
+    height: 64,
+    marginHorizontal: 20,
+    marginBottom: 20,
+    elevation: 3,
+    shadowColor: '#3B6029',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 5,
+  },
+  plusIconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  addProductText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  /* Product Stats Card */
+  cardContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#F0EFEA',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+  },
+  cardHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  cardHeaderTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+  },
+  statsMetricsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  metricItem: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  metricIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  metricTextGroup: {
+    justifyContent: 'center',
+  },
+  metricNumber: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    lineHeight: 30,
+  },
+  metricLabel: {
+    fontSize: 12,
+    color: '#666666',
+    fontWeight: '500',
+  },
+  verticalDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: '#EFEFEA',
+  },
+  /* Sales Card */
+  salesCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#F0EFEA',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+  },
+  salesBagCircle: {
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+    backgroundColor: '#F5ECE6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 14,
+  },
+  salesTextContainer: {
+    flex: 1,
+  },
+  salesLabel: {
+    fontSize: 13,
+    color: '#666666',
+    marginBottom: 2,
+  },
+  salesAmount: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#4E342E',
+  },
+  /* Recent Orders Section */
+  recentOrdersCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#F0EFEA',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+  },
+  recentHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+  recentHeaderTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+  },
+  viewAllText: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#3B6029',
+  },
+  orderRowItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  orderBadgeCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#EAF2E8',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  orderTextGroup: {
+    flex: 1,
+  },
+  orderTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+    marginBottom: 2,
+  },
+  orderSub: {
+    fontSize: 12,
+    color: '#666666',
+  },
+  orderDividerLine: {
+    height: 1,
+    backgroundColor: '#F5F4EF',
+    marginVertical: 8,
+  },
+  /* Sales Growth Tip Card */
+  tipCard: {
+    backgroundColor: '#FDF7EC',
+    borderWidth: 1,
+    borderColor: '#F3E8D3',
+    borderRadius: 16,
+    padding: 14,
+    marginHorizontal: 20,
+    marginBottom: 16,
+  },
+  tipTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+    marginBottom: 4,
+  },
+  tipBody: {
+    fontSize: 13,
+    color: '#555555',
+    lineHeight: 18,
+  },
+  /* Sketch Overlay */
+  sketchWrapper: {
+    width: '100%',
+    height: 120,
+    marginTop: 4,
+    overflow: 'hidden',
+  },
+  sketchImage: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.6,
+  },
+  /* Floating Chat FAB */
+  floatingChatButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 84,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#3B6029',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#3B6029',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 6,
+    zIndex: 99,
+  },
+  /* Bottom Navigation Bar */
+  bottomNavContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    height: 64,
+    marginHorizontal: 16,
+    marginBottom: 10,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    borderWidth: 1,
+    borderColor: '#F0EFEA',
+  },
+  navTab: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 6,
+  },
+  navTabText: {
+    fontSize: 11,
+    color: '#666666',
+    marginTop: 3,
+    fontWeight: '500',
+  },
+  navTabTextActive: {
+    color: '#3B6029',
+    fontWeight: 'bold',
+  },
+  navTabTextActiveProduct: {
+    color: '#E65100',
+    fontWeight: 'bold',
+  },
+  navTabTextActiveCustomer: {
+    color: '#5E35B1',
+    fontWeight: 'bold',
+  },
+  navTabTextActiveProfile: {
+    color: '#1976D2',
+    fontWeight: 'bold',
+  },
+  /* Modal */
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    width: '85%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 20,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  langOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  langOptionSelected: {
+    backgroundColor: '#F4F8F3',
+    borderRadius: 10,
+  },
+  langOptionText: {
+    fontSize: 16,
+    color: '#333333',
+  },
+  langOptionTextSelected: {
+    fontWeight: 'bold',
+    color: '#3B6029',
+  },
+});

@@ -329,7 +329,7 @@ export default function HomeScreen() {
           {/* Tab 4: Profile */}
           <TouchableOpacity
             style={styles.navTab}
-            onPress={() => setActiveTab('profile')}
+            onPress={() => router.push({ pathname: '/profile', params: { lang: selectedLang } })}
             activeOpacity={0.7}
           >
             <Ionicons

@@ -132,6 +132,27 @@ export default function WebHelpPortalScreen() {
                 onChangeText={setSearchQuery}
               />
             </View>
+
+            {/* Sahayata Kendra Direct Link Banner */}
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: '#2E7D32',
+                borderRadius: 10,
+                paddingVertical: 10,
+                paddingHorizontal: 16,
+                marginTop: 14,
+                alignSelf: 'center',
+              }}
+              onPress={() => router.push('/web-helper')}
+              activeOpacity={0.85}
+            >
+              <Ionicons name="business" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
+              <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>
+                {isHindi ? '🏢 जिला सहायता केंद्र पोर्टल पर जाएं (Helper Dashboard) →' : '🏢 Visit District Sahayata Kendra Portal →'}
+              </Text>
+            </TouchableOpacity>
           </View>
 
           {/* Quick Support Category Cards (4 Cards Grid) */}

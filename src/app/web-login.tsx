@@ -60,7 +60,7 @@ export default function WebLoginScreen() {
     if (selectedRole === 'govt') {
       router.push({ pathname: '/web-govt', params: { lang: selectedLang } });
     } else if (selectedRole === 'support') {
-      router.push({ pathname: '/web-help', params: { lang: selectedLang } });
+      router.push({ pathname: '/web-helper', params: { lang: selectedLang } });
     } else {
       router.push({ pathname: '/web-customer', params: { lang: selectedLang } });
     }
@@ -300,7 +300,7 @@ export default function WebLoginScreen() {
                         selectedRole === 'support' && styles.roleCardTextActive,
                       ]}
                     >
-                      {isHindi ? 'सहायता केंद्र' : 'Help Centre'}
+                      {isHindi ? 'जिला सहायता केंद्र' : 'Sahayata Kendra'}
                     </Text>
                   </TouchableOpacity>
                 </View>

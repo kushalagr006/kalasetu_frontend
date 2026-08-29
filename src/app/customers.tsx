@@ -8,88 +8,50 @@ import {
   ScrollView,
   StatusBar,
   Platform,
-  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 
 type LangCode = 'hi' | 'en';
-type CustomerFilter = 'all' | 'new' | 'active' | 'repeat';
 
-interface CustomerItem {
+interface RecentCustomerItem {
   id: string;
   nameHi: string;
   nameEn: string;
   locationHi: string;
   locationEn: string;
-  phone: string;
-  ordersCountHi: string;
-  ordersCountEn: string;
-  totalSpent: string;
-  category: 'new' | 'active' | 'repeat';
+  inquiriesHi: string;
+  inquiriesEn: string;
 }
 
-const CUSTOMERS_DATA: CustomerItem[] = [
+const RECENT_CUSTOMERS_DATA: RecentCustomerItem[] = [
   {
     id: '1',
-    nameHi: 'रीना शर्मा',
-    nameEn: 'Reena Sharma',
+    nameHi: 'राहुल शर्मा',
+    nameEn: 'Rahul Sharma',
     locationHi: 'भोपाल, मध्य प्रदेश',
     locationEn: 'Bhopal, Madhya Pradesh',
-    phone: '+91 98765 43210',
-    ordersCountHi: '2 ऑर्डर',
-    ordersCountEn: '2 Orders',
-    totalSpent: '₹2,450',
-    category: 'active',
+    inquiriesHi: '20 पूछताछ',
+    inquiriesEn: '20 Inquiries',
   },
   {
     id: '2',
-    nameHi: 'किरण चौहान',
-    nameEn: 'Kiran Chauhan',
-    locationHi: 'रायपुर, छत्तीसगढ़',
-    locationEn: 'Raipur, Chhattisgarh',
-    phone: '+91 99876 54321',
-    ordersCountHi: '1 ऑर्डर',
-    ordersCountEn: '1 Order',
-    totalSpent: '₹1,850',
-    category: 'new',
+    nameHi: 'सीमा ट्रेडर्स',
+    nameEn: 'Seema Traders',
+    locationHi: 'जयपुर, राजस्थान',
+    locationEn: 'Jaipur, Rajasthan',
+    inquiriesHi: '12 पूछताछ',
+    inquiriesEn: '12 Inquiries',
   },
   {
     id: '3',
-    nameHi: 'पूजा पटेल',
-    nameEn: 'Pooja Patel',
+    nameHi: 'माला कलेक्शन',
+    nameEn: 'Mala Collection',
     locationHi: 'इंदौर, मध्य प्रदेश',
     locationEn: 'Indore, Madhya Pradesh',
-    phone: '+91 96325 67890',
-    ordersCountHi: '3 ऑर्डर',
-    ordersCountEn: '3 Orders',
-    totalSpent: '₹3,600',
-    category: 'repeat',
-  },
-  {
-    id: '4',
-    nameHi: 'अमित वर्मा',
-    nameEn: 'Amit Verma',
-    locationHi: 'जयपुर, राजस्थान',
-    locationEn: 'Jaipur, Rajasthan',
-    phone: '+91 94123 45678',
-    ordersCountHi: '1 ऑर्डर',
-    ordersCountEn: '1 Order',
-    totalSpent: '₹950',
-    category: 'new',
-  },
-  {
-    id: '5',
-    nameHi: 'नेहा गुप्ता',
-    nameEn: 'Neha Gupta',
-    locationHi: 'दिल्ली, दिल्ली',
-    locationEn: 'Delhi, Delhi',
-    phone: '+91 91234 56789',
-    ordersCountHi: '2 ऑर्डर',
-    ordersCountEn: '2 Orders',
-    totalSpent: '₹2,100',
-    category: 'repeat',
+    inquiriesHi: '8 पूछताछ',
+    inquiriesEn: '8 Inquiries',
   },
 ];
 
@@ -99,16 +61,21 @@ export default function CustomersScreen() {
 
   const selectedLang: LangCode = (params.lang as LangCode) || 'hi';
   const isHindi = selectedLang === 'hi';
-  const [activeFilter, setActiveFilter] = useState<CustomerFilter>('all');
 
-  const filteredCustomers = CUSTOMERS_DATA.filter((c) => {
-    if (activeFilter === 'all') return true;
-    return c.category === activeFilter;
-  });
+  const handleChatPress = (customerName: string) => {
+    alert(
+      isHindi
+        ? `${customerName} के साथ चैट शुरू हो रही है...`
+        : `Opening chat with ${customerName}...`
+    );
+  };
 
-  const handleCallPhone = (phoneNum: string) => {
-    const raw = phoneNum.replace(/[^0-9+]/g, '');
-    Linking.openURL(`tel:${raw}`).catch(() => alert(`Call ${phoneNum}`));
+  const handleQuickCardPress = (cardTitle: string) => {
+    alert(
+      isHindi
+        ? `${cardTitle} अनुभाग खुल रहा है...`
+        : `Opening ${cardTitle} section...`
+    );
   };
 
   return (
@@ -120,7 +87,7 @@ export default function CustomersScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Header Row: Title, Subtitle, Notification Bell */}
+          {/* Top Header Row: Title, Subtitle, Notification Bell */}
           <View style={styles.headerRow}>
             <View style={styles.headerTextGroup}>
               <Text style={styles.headerTitle}>
@@ -128,8 +95,8 @@ export default function CustomersScreen() {
               </Text>
               <Text style={styles.headerSubtitle}>
                 {isHindi
-                  ? 'अपने सभी ग्राहकों से जुड़ें और ऑर्डर संभालें'
-                  : 'Connect with all your customers & manage orders'}
+                  ? 'अपने ग्राहकों से जुड़ें और नए अवसर पाएं'
+                  : 'Connect with your buyers & find new opportunities'}
               </Text>
             </View>
 
@@ -143,236 +110,177 @@ export default function CustomersScreen() {
             </TouchableOpacity>
           </View>
 
-          {/* Search & Filter Action Bar */}
-          <View style={styles.actionToolRow}>
-            <TouchableOpacity
-              style={styles.searchButton}
-              onPress={() => alert(isHindi ? 'ग्राहक खोजें...' : 'Search customers...')}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="search-outline" size={20} color="#555555" />
-            </TouchableOpacity>
+          {/* "जल्दी से चुनें" (Quick Selection Cards - Stacked Vertically) */}
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>
+              {isHindi ? 'जल्दी से चुनें' : 'Quick Selection'}
+            </Text>
 
-            <TouchableOpacity
-              style={styles.filterButton}
-              onPress={() => alert(isHindi ? 'फ़िल्टर विकल्प' : 'Filter options')}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="funnel-outline" size={20} color="#555555" />
-            </TouchableOpacity>
+            <View style={styles.quickCardsVerticalGroup}>
+              {/* Card 1: My Customers (Green Theme) */}
+              <TouchableOpacity
+                style={[styles.quickCard, styles.quickCardGreen]}
+                onPress={() => handleQuickCardPress(isHindi ? 'मेरे ग्राहक' : 'My Customers')}
+                activeOpacity={0.85}
+              >
+                <View style={[styles.quickIconCircle, { backgroundColor: '#EAF2E8' }]}>
+                  <Ionicons name="people" size={22} color="#3B6029" />
+                </View>
+                <View style={styles.quickCardTextGroup}>
+                  <Text style={styles.quickCardTitle}>
+                    {isHindi ? 'मेरे ग्राहक' : 'My Customers'}
+                  </Text>
+                  <Text style={styles.quickCardDesc}>
+                    {isHindi
+                      ? 'अपने ग्राहकों से बात करें और ऑर्डर संभालें'
+                      : 'Talk with your buyers & manage orders'}
+                  </Text>
+                </View>
+                <View style={[styles.quickArrowCircle, { backgroundColor: '#EAF2E8' }]}>
+                  <Ionicons name="arrow-forward" size={14} color="#3B6029" />
+                </View>
+              </TouchableOpacity>
+
+              {/* Card 2: Bulk Orders (Blue Theme) */}
+              <TouchableOpacity
+                style={[styles.quickCard, styles.quickCardBlue]}
+                onPress={() => handleQuickCardPress(isHindi ? 'बल्क ऑर्डर' : 'Bulk Orders')}
+                activeOpacity={0.85}
+              >
+                <View style={[styles.quickIconCircle, { backgroundColor: '#E3F2FD' }]}>
+                  <Ionicons name="cube" size={22} color="#1976D2" />
+                </View>
+                <View style={styles.quickCardTextGroup}>
+                  <Text style={styles.quickCardTitle}>
+                    {isHindi ? 'बल्क ऑर्डर' : 'Bulk Orders'}
+                  </Text>
+                  <Text style={styles.quickCardDesc}>
+                    {isHindi
+                      ? 'बड़े ऑर्डर के अवसर देखें'
+                      : 'View big order opportunities'}
+                  </Text>
+                </View>
+                <View style={[styles.quickArrowCircle, { backgroundColor: '#E3F2FD' }]}>
+                  <Ionicons name="arrow-forward" size={14} color="#1976D2" />
+                </View>
+              </TouchableOpacity>
+
+              {/* Card 3: Tenders (Orange Theme) */}
+              <TouchableOpacity
+                style={[styles.quickCard, styles.quickCardOrange]}
+                onPress={() => handleQuickCardPress(isHindi ? 'टेंडर' : 'Tenders')}
+                activeOpacity={0.85}
+              >
+                <View style={[styles.quickIconCircle, { backgroundColor: '#FFF0E6' }]}>
+                  <Ionicons name="document-text" size={22} color="#E65100" />
+                </View>
+                <View style={styles.quickCardTextGroup}>
+                  <Text style={styles.quickCardTitle}>
+                    {isHindi ? 'टेंडर' : 'Tenders'}
+                  </Text>
+                  <Text style={styles.quickCardDesc}>
+                    {isHindi
+                      ? 'सरकारी और निजी टेंडर के अवसर देखें'
+                      : 'View Govt & private tender options'}
+                  </Text>
+                </View>
+                <View style={[styles.quickArrowCircle, { backgroundColor: '#FFF0E6' }]}>
+                  <Ionicons name="arrow-forward" size={14} color="#E65100" />
+                </View>
+              </TouchableOpacity>
+            </View>
           </View>
 
-          {/* Metric Cards Row (4 Grid Cards) */}
-          <View style={styles.metricsGridContainer}>
-            {/* Card 1: Total Customers */}
-            <View style={styles.metricCard}>
-              <View style={[styles.metricIconCircle, { backgroundColor: '#EAF2E8' }]}>
-                <Ionicons name="people-outline" size={22} color="#3B6029" />
-              </View>
-              <Text style={[styles.metricValueText, { color: '#3B6029' }]}>48</Text>
-              <Text style={styles.metricLabelText}>
-                {isHindi ? 'कुल ग्राहक' : 'Total Customers'}
+          {/* "हाल के ग्राहक" (Recent Customers Section) */}
+          <View style={styles.sectionContainer}>
+            <View style={styles.recentHeaderRow}>
+              <Text style={styles.sectionTitle}>
+                {isHindi ? 'हाल के ग्राहक' : 'Recent Customers'}
               </Text>
+              <TouchableOpacity activeOpacity={0.7}>
+                <Text style={styles.viewAllText}>
+                  {isHindi ? 'सभी देखें' : 'View All'}
+                </Text>
+              </TouchableOpacity>
             </View>
 
-            {/* Card 2: Active Customers */}
-            <View style={styles.metricCard}>
-              <View style={[styles.metricIconCircle, { backgroundColor: '#E3F2FD' }]}>
-                <Ionicons name="cube-outline" size={22} color="#1976D2" />
-              </View>
-              <Text style={[styles.metricValueText, { color: '#1976D2' }]}>26</Text>
-              <Text style={styles.metricLabelText}>
-                {isHindi ? 'सक्रिय ग्राहक' : 'Active Customers'}
-              </Text>
-            </View>
+            {/* List of Recent Customer Cards */}
+            <View style={styles.recentListGroup}>
+              {RECENT_CUSTOMERS_DATA.map((customer) => {
+                const displayName = isHindi ? customer.nameHi : customer.nameEn;
+                const displayLoc = isHindi ? customer.locationHi : customer.locationEn;
+                const displayInq = isHindi ? customer.inquiriesHi : customer.inquiriesEn;
 
-            {/* Card 3: Repeat Orders */}
-            <View style={styles.metricCard}>
-              <View style={[styles.metricIconCircle, { backgroundColor: '#FFF0E6' }]}>
-                <Ionicons name="bag-handle-outline" size={22} color="#E65100" />
-              </View>
-              <Text style={[styles.metricValueText, { color: '#E65100' }]}>12</Text>
-              <Text style={styles.metricLabelText}>
-                {isHindi ? 'पुनः ऑर्डर दिए' : 'Repeat Orders'}
-              </Text>
-            </View>
+                return (
+                  <TouchableOpacity
+                    key={customer.id}
+                    style={styles.recentCustomerCard}
+                    onPress={() => handleChatPress(displayName)}
+                    activeOpacity={0.85}
+                  >
+                    <View style={styles.customerAvatarCircle}>
+                      <Ionicons name="person-outline" size={22} color="#3B6029" />
+                    </View>
 
-            {/* Card 4: Average Rating */}
-            <View style={styles.metricCard}>
-              <View style={[styles.metricIconCircle, { backgroundColor: '#F3E5F5' }]}>
-                <Ionicons name="star-outline" size={22} color="#5E35B1" />
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={[styles.metricValueText, { color: '#5E35B1' }]}>4.6</Text>
-                <Ionicons name="star" size={14} color="#FFB300" style={{ marginLeft: 3 }} />
-              </View>
-              <Text style={styles.metricLabelText}>
-                {isHindi ? 'औसत रेटिंग' : 'Avg Rating'}
-              </Text>
-            </View>
-          </View>
+                    <View style={styles.customerInfoGroup}>
+                      <Text style={styles.customerName}>{displayName}</Text>
+                      <Text style={styles.customerLoc}>{displayLoc}</Text>
 
-          {/* Filter Category Tabs Header */}
-          <View style={styles.categoryTabsRow}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsScrollContent}>
-              <TouchableOpacity
-                style={styles.tabItem}
-                onPress={() => setActiveFilter('all')}
-                activeOpacity={0.7}
-              >
-                <Text
-                  style={[
-                    styles.tabItemText,
-                    activeFilter === 'all' && styles.tabItemTextActive,
-                  ]}
-                >
-                  {isHindi ? 'सभी ग्राहक' : 'All Customers'}
-                </Text>
-                {activeFilter === 'all' && <View style={styles.tabActiveIndicator} />}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.tabItem}
-                onPress={() => setActiveFilter('new')}
-                activeOpacity={0.7}
-              >
-                <Text
-                  style={[
-                    styles.tabItemText,
-                    activeFilter === 'new' && styles.tabItemTextActive,
-                  ]}
-                >
-                  {isHindi ? 'नए ग्राहक' : 'New Customers'}
-                </Text>
-                {activeFilter === 'new' && <View style={styles.tabActiveIndicator} />}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.tabItem}
-                onPress={() => setActiveFilter('active')}
-                activeOpacity={0.7}
-              >
-                <Text
-                  style={[
-                    styles.tabItemText,
-                    activeFilter === 'active' && styles.tabItemTextActive,
-                  ]}
-                >
-                  {isHindi ? 'सक्रिय ग्राहक' : 'Active Customers'}
-                </Text>
-                {activeFilter === 'active' && <View style={styles.tabActiveIndicator} />}
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.tabItem}
-                onPress={() => setActiveFilter('repeat')}
-                activeOpacity={0.7}
-              >
-                <Text
-                  style={[
-                    styles.tabItemText,
-                    activeFilter === 'repeat' && styles.tabItemTextActive,
-                  ]}
-                >
-                  {isHindi ? 'पुनः ऑर्डर वाले' : 'Repeat Orders'}
-                </Text>
-                {activeFilter === 'repeat' && <View style={styles.tabActiveIndicator} />}
-              </TouchableOpacity>
-            </ScrollView>
-          </View>
-
-          {/* Customer List Card Container */}
-          <View style={styles.customerListCard}>
-            {filteredCustomers.map((customer, index) => (
-              <React.Fragment key={customer.id}>
-                <TouchableOpacity
-                  style={styles.customerRowItem}
-                  onPress={() => alert(`${customer.nameHi} - ${customer.phone}`)}
-                  activeOpacity={0.8}
-                >
-                  {/* Left Avatar Icon Circle */}
-                  <View style={styles.customerAvatarCircle}>
-                    <Ionicons name="person-outline" size={22} color="#3B6029" />
-                  </View>
-
-                  {/* Center Info Group */}
-                  <View style={styles.customerInfoGroup}>
-                    <Text style={styles.customerName}>
-                      {isHindi ? customer.nameHi : customer.nameEn}
-                    </Text>
-
-                    <View style={styles.customerDetailRow}>
-                      <Ionicons name="location-outline" size={13} color="#3B6029" style={{ marginRight: 4 }} />
-                      <Text style={styles.customerDetailText}>
-                        {isHindi ? customer.locationHi : customer.locationEn}
-                      </Text>
+                      <View style={styles.inquiryBadgePill}>
+                        <Text style={styles.inquiryBadgeText}>{displayInq}</Text>
+                      </View>
                     </View>
 
                     <TouchableOpacity
-                      style={styles.customerDetailRow}
-                      onPress={() => handleCallPhone(customer.phone)}
-                      activeOpacity={0.7}
+                      style={styles.chatButton}
+                      onPress={() => handleChatPress(displayName)}
+                      activeOpacity={0.8}
                     >
-                      <Ionicons name="call-outline" size={13} color="#3B6029" style={{ marginRight: 4 }} />
-                      <Text style={styles.customerDetailText}>{customer.phone}</Text>
-                    </TouchableOpacity>
-                  </View>
-
-                  {/* Right Badges & Amount */}
-                  <View style={styles.customerRightGroup}>
-                    <View style={styles.orderBadgePill}>
-                      <Text style={styles.orderBadgeText}>
-                        {isHindi ? customer.ordersCountHi : customer.ordersCountEn}
+                      <Ionicons name="chatbubble" size={14} color="#3B6029" style={{ marginRight: 4 }} />
+                      <Text style={styles.chatButtonText}>
+                        {isHindi ? 'चैट करें' : 'Chat'}
                       </Text>
-                    </View>
+                    </TouchableOpacity>
 
-                    <Text style={styles.spentLabel}>
-                      {isHindi ? 'कुल खर्च ' : 'Spent '}
-                      <Text style={styles.spentAmount}>{customer.totalSpent}</Text>
-                    </Text>
-                  </View>
-
-                  <Ionicons name="chevron-forward" size={18} color="#999999" style={{ marginLeft: 8 }} />
-                </TouchableOpacity>
-
-                {index < filteredCustomers.length - 1 && (
-                  <View style={styles.customerRowDivider} />
-                )}
-              </React.Fragment>
-            ))}
+                    <Ionicons name="chevron-forward" size={18} color="#999999" style={{ marginLeft: 8 }} />
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
 
-          {/* Bottom "Add New Customer" Card Banner */}
-          <View style={styles.addCustomerBanner}>
+          {/* Tender Alert Banner ("नई टेंडर सूचनाएं पाएं") */}
+          <View style={styles.tenderAlertBanner}>
             <Image
-              source={require('@/assets/images/shg_women.png')}
-              style={styles.bannerAvatar}
+              source={require('@/assets/images/tender_illustration.png')}
+              style={styles.tenderIllustration}
               resizeMode="contain"
             />
-            <View style={styles.bannerTextGroup}>
-              <Text style={styles.bannerTitle}>
-                {isHindi ? 'नए ग्राहक जोड़ें' : 'Add New Customers'}
+
+            <View style={styles.tenderTextGroup}>
+              <Text style={styles.tenderTitle}>
+                {isHindi ? 'नई टेंडर सूचनाएं पाएं' : 'Get New Tender Alerts'}
               </Text>
-              <Text style={styles.bannerSubtitle}>
+              <Text style={styles.tenderSubtitle}>
                 {isHindi
-                  ? 'अपने ग्राहकों से जुड़े रहें और ज्यादा ऑर्डर पाएं'
-                  : 'Stay connected with customers and get more orders'}
+                  ? 'समय पर जानकारी पाएं और अपने उत्पादों के लिए बेहतर अवसर प्राप्त करें।'
+                  : 'Get timely info & better opportunities for your products.'}
               </Text>
             </View>
 
             <TouchableOpacity
-              style={styles.bannerAddButton}
-              onPress={() => alert(isHindi ? 'नया ग्राहक जोड़ें...' : 'Add customer form...')}
+              style={styles.tenderAlertButton}
+              onPress={() => alert(isHindi ? 'टेंडर अलर्ट सेट हो गया है!' : 'Tender Alert Set!')}
               activeOpacity={0.85}
             >
-              <Ionicons name="person-add-outline" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
-              <Text style={styles.bannerAddButtonText}>
-                {isHindi ? 'ग्राहक जोड़ें' : 'Add'}
+              <Ionicons name="notifications" size={14} color="#FFFFFF" style={{ marginRight: 4 }} />
+              <Text style={styles.tenderAlertButtonText}>
+                {isHindi ? 'टेंडर अलर्ट सेट करें' : 'Set Alert'}
               </Text>
             </TouchableOpacity>
           </View>
 
-          {/* Village Line Art Background Overlay */}
+          {/* Scenic Village Sketch Overlay at Bottom of Screen */}
           <View style={styles.sketchWrapper}>
             <Image
               source={require('@/assets/images/village_sketch.png')}
@@ -381,15 +289,6 @@ export default function CustomersScreen() {
             />
           </View>
         </ScrollView>
-
-        {/* Floating Action Chat Button */}
-        <TouchableOpacity
-          style={styles.floatingChatButton}
-          onPress={() => alert(isHindi ? 'सहायता चैट / Help Chat' : 'Help Chat')}
-          activeOpacity={0.85}
-        >
-          <Ionicons name="chatbubble-ellipses" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
 
         {/* Bottom Navigation Bar (4 Tabs) */}
         <View style={styles.bottomNavContainer}>
@@ -462,7 +361,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingHorizontal: 20,
     paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight ? 8 : 12) : 8,
-    paddingBottom: 8,
+    paddingBottom: 16,
   },
   headerTextGroup: {
     flex: 1,
@@ -499,36 +398,97 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#FF3B30',
   },
-  /* Action Tools Row */
-  actionToolRow: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+  /* Section Containers */
+  sectionContainer: {
     paddingHorizontal: 20,
-    marginBottom: 14,
-    gap: 10,
+    marginBottom: 20,
   },
-  searchButton: {
-    padding: 6,
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+    marginBottom: 12,
   },
-  filterButton: {
-    padding: 6,
+  /* Quick Cards Vertical Stack */
+  quickCardsVerticalGroup: {
+    gap: 12,
   },
-  /* Metrics Grid (4 Cards) */
-  metricsGridContainer: {
+  quickCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 2,
+  },
+  quickCardGreen: {
+    backgroundColor: '#F8FCF7',
+    borderColor: '#E3F0E0',
+  },
+  quickCardBlue: {
+    backgroundColor: '#F5F9FF',
+    borderColor: '#E1EDFF',
+  },
+  quickCardOrange: {
+    backgroundColor: '#FFFBF5',
+    borderColor: '#FFE8D6',
+  },
+  quickIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 14,
+  },
+  quickCardTextGroup: {
+    flex: 1,
+    paddingRight: 8,
+  },
+  quickCardTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+    marginBottom: 2,
+  },
+  quickCardDesc: {
+    fontSize: 12,
+    color: '#666666',
+    lineHeight: 16,
+  },
+  quickArrowCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  /* Recent Customers Section */
+  recentHeaderRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    marginBottom: 20,
-    gap: 6,
+    alignItems: 'center',
+    marginBottom: 12,
   },
-  metricCard: {
-    flex: 1,
+  viewAllText: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#3B6029',
+  },
+  recentListGroup: {
+    gap: 10,
+  },
+  recentCustomerCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    paddingVertical: 14,
-    paddingHorizontal: 6,
-    alignItems: 'center',
+    padding: 14,
     borderWidth: 1,
     borderColor: '#F0EFEA',
     elevation: 1.5,
@@ -537,79 +497,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.03,
     shadowRadius: 3,
   },
-  metricIconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  metricValueText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 2,
-  },
-  metricLabelText: {
-    fontSize: 11,
-    color: '#666666',
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  /* Category Tabs Row */
-  categoryTabsRow: {
-    marginBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0EFEA',
-  },
-  tabsScrollContent: {
-    paddingHorizontal: 20,
-    gap: 20,
-  },
-  tabItem: {
-    paddingBottom: 10,
-    position: 'relative',
-    alignItems: 'center',
-  },
-  tabItemText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666666',
-  },
-  tabItemTextActive: {
-    color: '#3B6029',
-    fontWeight: 'bold',
-  },
-  tabActiveIndicator: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 3,
-    backgroundColor: '#3B6029',
-    borderRadius: 2,
-  },
-  /* Customer List Card Container */
-  customerListCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    paddingVertical: 6,
-    marginHorizontal: 20,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#F0EFEA',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-  },
-  customerRowItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-  },
   customerAvatarCircle: {
     width: 46,
     height: 46,
@@ -617,57 +504,51 @@ const styles = StyleSheet.create({
     backgroundColor: '#EAF2E8',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 14,
+    marginRight: 12,
   },
   customerInfoGroup: {
     flex: 1,
   },
   customerName: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#1A1A1A',
-    marginBottom: 4,
+    marginBottom: 2,
   },
-  customerDetailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 2,
-  },
-  customerDetailText: {
+  customerLoc: {
     fontSize: 12,
     color: '#666666',
+    marginBottom: 4,
   },
-  customerRightGroup: {
-    alignItems: 'flex-end',
-  },
-  orderBadgePill: {
+  inquiryBadgePill: {
+    alignSelf: 'flex-start',
     backgroundColor: '#F0F7ED',
-    paddingVertical: 3,
-    paddingHorizontal: 10,
-    borderRadius: 12,
-    marginBottom: 6,
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: 10,
   },
-  orderBadgeText: {
+  inquiryBadgeText: {
     fontSize: 11,
     fontWeight: '600',
     color: '#3B6029',
   },
-  spentLabel: {
-    fontSize: 11,
-    color: '#666666',
+  chatButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E0D8',
+    borderRadius: 12,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
   },
-  spentAmount: {
-    fontSize: 13,
-    fontWeight: 'bold',
+  chatButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
     color: '#3B6029',
   },
-  customerRowDivider: {
-    height: 1,
-    backgroundColor: '#F5F4EF',
-    marginLeft: 74,
-  },
-  /* Add Customer Banner Card */
-  addCustomerBanner: {
+  /* Tender Alert Banner */
+  tenderAlertBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F4F8F3',
@@ -678,41 +559,41 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 16,
   },
-  bannerAvatar: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    marginRight: 12,
+  tenderIllustration: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+    marginRight: 10,
   },
-  bannerTextGroup: {
+  tenderTextGroup: {
     flex: 1,
     paddingRight: 6,
   },
-  bannerTitle: {
+  tenderTitle: {
     fontSize: 15,
     fontWeight: 'bold',
     color: '#1A1A1A',
     marginBottom: 2,
   },
-  bannerSubtitle: {
-    fontSize: 12,
+  tenderSubtitle: {
+    fontSize: 11,
     color: '#555555',
-    lineHeight: 16,
+    lineHeight: 15,
   },
-  bannerAddButton: {
+  tenderAlertButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#3B6029',
     borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
   },
-  bannerAddButtonText: {
-    fontSize: 13,
+  tenderAlertButtonText: {
+    fontSize: 11,
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
-  /* Sketch Overlay */
+  /* Bottom Village Sketch Overlay */
   sketchWrapper: {
     width: '100%',
     height: 100,
@@ -723,24 +604,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     opacity: 0.6,
-  },
-  /* Floating Chat FAB */
-  floatingChatButton: {
-    position: 'absolute',
-    right: 20,
-    bottom: 84,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#3B6029',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 6,
-    shadowColor: '#3B6029',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 6,
-    zIndex: 99,
   },
   /* Bottom Navigation Bar */
   bottomNavContainer: {

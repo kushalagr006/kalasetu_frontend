@@ -27,6 +27,9 @@ const TRANSLATIONS_HELPER = {
     myPosts: 'मेरी पोस्ट',
     myProfile: 'मेरा प्रोफाइल',
     logout: 'लॉग आउट',
+    helpNeededTitle: 'सहायता चाहिए?',
+    helpNeededSub: 'किसी भी समस्या के लिए संपर्क करें।',
+    helpCenterBtn: 'सहायता केंद्र',
     welcomeGreeting: 'नमस्ते, राजेश कुमार!',
     subHeaderTitle: 'जिला सहायता केंद्र डैशबोर्ड',
     bannerDesc: 'आप अपने जिले के कारीगरों की प्रोफाइल बनाएं और उनके उत्पाद ऑनलाइन पोस्ट करें।',
@@ -64,6 +67,9 @@ const TRANSLATIONS_HELPER = {
     myPosts: 'My Posts',
     myProfile: 'My Profile',
     logout: 'Logout',
+    helpNeededTitle: 'Need Help?',
+    helpNeededSub: 'Contact us for any assistance.',
+    helpCenterBtn: 'Help Centre',
     welcomeGreeting: 'Welcome, Rajesh Kumar!',
     subHeaderTitle: 'District Helpdesk Center Dashboard',
     bannerDesc: 'Create profile for rural artisans in your district and post their authentic handmade products online.',
@@ -224,20 +230,22 @@ export default function WebHelperDashboardScreen() {
           {/* Left Helper Sidebar Navigation */}
           {isDesktop && (
             <View style={styles.sidebarCol}>
-              {/* KalaSetu Logo & Sub-label */}
-              <View style={styles.sidebarHeaderBrand}>
-                <Image
-                  source={require('@/assets/images/logo_icon.png')}
-                  style={styles.logoImage}
-                  resizeMode="contain"
-                />
-                <View style={styles.subBrandTag}>
-                  <Text style={styles.subBrandTagText}>जिला सहायता केंद्र</Text>
-                </View>
-              </View>
-
-              {/* Navigation Menu */}
               <View style={styles.sidebarTopGroup}>
+                {/* KalaSetu Logo & Sub-label */}
+                <View style={styles.sidebarHeaderBrand}>
+                  <TouchableOpacity onPress={() => setActiveMenuIndex(0)}>
+                    <Image
+                      source={require('@/assets/images/logo_icon.png')}
+                      style={styles.logoImage}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                  <View style={styles.subBrandTag}>
+                    <Text style={styles.subBrandTagText}>जिला सहायता केंद्र</Text>
+                  </View>
+                </View>
+
+                {/* Navigation Menu */}
                 <View style={styles.sidebarMenuGroup}>
                   {/* 1. डैशबोर्ड */}
                   <TouchableOpacity
@@ -251,7 +259,7 @@ export default function WebHelperDashboardScreen() {
                   {/* 2. नया कारीगर जोड़ें */}
                   <TouchableOpacity
                     style={[styles.sidebarNavItem, activeMenuIndex === 1 && styles.sidebarNavItemActive]}
-                    onPress={() => setActiveMenuIndex(1)}
+                    onPress={() => router.push('/web-add-artisan')}
                   >
                     <Ionicons name="person-add-outline" size={18} color="#555555" style={{ marginRight: 12 }} />
                     <Text style={styles.sidebarNavText}>{t.addArtisan}</Text>
@@ -260,7 +268,7 @@ export default function WebHelperDashboardScreen() {
                   {/* 3. उत्पाद पोस्ट करें */}
                   <TouchableOpacity
                     style={[styles.sidebarNavItem, activeMenuIndex === 2 && styles.sidebarNavItemActive]}
-                    onPress={() => setActiveMenuIndex(2)}
+                    onPress={() => router.push('/web-post-product')}
                   >
                     <Ionicons name="cube-outline" size={18} color="#555555" style={{ marginRight: 12 }} />
                     <Text style={styles.sidebarNavText}>{t.postProduct}</Text>
@@ -269,7 +277,7 @@ export default function WebHelperDashboardScreen() {
                   {/* 4. कारीगर देखें */}
                   <TouchableOpacity
                     style={[styles.sidebarNavItem, activeMenuIndex === 3 && styles.sidebarNavItemActive]}
-                    onPress={() => setActiveMenuIndex(3)}
+                    onPress={() => router.push('/web-view-artisans')}
                   >
                     <Ionicons name="people-outline" size={18} color="#555555" style={{ marginRight: 12 }} />
                     <Text style={styles.sidebarNavText}>{t.viewArtisans}</Text>
@@ -278,7 +286,7 @@ export default function WebHelperDashboardScreen() {
                   {/* 5. मेरी पोस्ट */}
                   <TouchableOpacity
                     style={[styles.sidebarNavItem, activeMenuIndex === 4 && styles.sidebarNavItemActive]}
-                    onPress={() => setActiveMenuIndex(4)}
+                    onPress={() => router.push('/web-my-posts')}
                   >
                     <Ionicons name="document-text-outline" size={18} color="#555555" style={{ marginRight: 12 }} />
                     <Text style={styles.sidebarNavText}>{t.myPosts}</Text>
@@ -288,7 +296,7 @@ export default function WebHelperDashboardScreen() {
 
               {/* Bottom Sidebar Group */}
               <View style={styles.sidebarBottomGroup}>
-                <TouchableOpacity style={styles.sidebarNavItem} onPress={() => router.push('/web-customer-profile')}>
+                <TouchableOpacity style={styles.sidebarNavItem} onPress={() => router.push('/web-helper-profile')}>
                   <Ionicons name="person-outline" size={18} color="#555555" style={{ marginRight: 12 }} />
                   <Text style={styles.sidebarNavText}>{t.myProfile}</Text>
                 </TouchableOpacity>
@@ -297,6 +305,22 @@ export default function WebHelperDashboardScreen() {
                   <Ionicons name="log-out-outline" size={18} color="#555555" style={{ marginRight: 12 }} />
                   <Text style={styles.sidebarNavText}>{t.logout}</Text>
                 </TouchableOpacity>
+
+                {/* Sidebar Bottom Help Card */}
+                <View style={styles.sidebarHelpCard}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+                    <Ionicons name="headset-outline" size={16} color="#333333" style={{ marginRight: 6 }} />
+                    <Text style={styles.sidebarHelpTitle}>{t.helpNeededTitle}</Text>
+                  </View>
+                  <Text style={styles.sidebarHelpSub}>{t.helpNeededSub}</Text>
+
+                  <TouchableOpacity
+                    style={styles.sidebarHelpOutlineBtn}
+                    onPress={() => router.push('/web-help')}
+                  >
+                    <Text style={styles.sidebarHelpOutlineBtnText}>{t.helpCenterBtn}</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           )}
@@ -387,7 +411,11 @@ export default function WebHelperDashboardScreen() {
                   <Text style={styles.actionCardTitleText}>{t.actionAddArtisanTitle}</Text>
                   <Text style={styles.actionCardDescText}>{t.actionAddArtisanDesc}</Text>
 
-                  <TouchableOpacity style={styles.addArtisanGreenBtn} activeOpacity={0.8}>
+                  <TouchableOpacity
+                    style={styles.addArtisanGreenBtn}
+                    onPress={() => router.push('/web-add-artisan')}
+                    activeOpacity={0.8}
+                  >
                     <Text style={styles.addArtisanGreenBtnText}>{t.actionAddArtisanBtn}</Text>
                   </TouchableOpacity>
                 </View>
@@ -403,7 +431,11 @@ export default function WebHelperDashboardScreen() {
                   <Text style={styles.actionCardTitleText}>{t.actionPostProductTitle}</Text>
                   <Text style={styles.actionCardDescText}>{t.actionPostProductDesc}</Text>
 
-                  <TouchableOpacity style={styles.postProductOrangeBtn} activeOpacity={0.8}>
+                  <TouchableOpacity
+                    style={styles.postProductOrangeBtn}
+                    onPress={() => router.push('/web-post-product')}
+                    activeOpacity={0.8}
+                  >
                     <Text style={styles.postProductOrangeBtnText}>{t.actionPostProductBtn}</Text>
                   </TouchableOpacity>
                 </View>
@@ -665,7 +697,37 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#F0F0F0',
     paddingTop: 12,
-    gap: 4,
+    gap: 8,
+  },
+  sidebarHelpCard: {
+    backgroundColor: '#FAF8F5',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#EBEBEB',
+    padding: 12,
+    marginTop: 8,
+  },
+  sidebarHelpTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+  },
+  sidebarHelpSub: {
+    fontSize: 10,
+    color: '#777777',
+    marginBottom: 8,
+  },
+  sidebarHelpOutlineBtn: {
+    borderWidth: 1,
+    borderColor: '#2E7D32',
+    borderRadius: 6,
+    paddingVertical: 4,
+    alignItems: 'center',
+  },
+  sidebarHelpOutlineBtnText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#2E7D32',
   },
   sidebarMenuGroup: {
     gap: 4,

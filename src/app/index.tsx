@@ -71,8 +71,15 @@ const TRANSLATIONS: Record<LangCode, {
   },
 };
 
+import WebLoginScreen from './web-login';
+
 export default function LoginScreen() {
   const router = useRouter();
+
+  if (Platform.OS === 'web') {
+    return <WebLoginScreen />;
+  }
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedLang, setSelectedLang] = useState<LangCode>('hi');
   const [isLangModalVisible, setIsLangModalVisible] = useState(false);

@@ -158,7 +158,7 @@ export default function ProductsScreen() {
 
             <TouchableOpacity
               style={styles.addProductBtn}
-              onPress={() => alert(isHindi ? 'नया उत्पाद जोड़ने का फॉर्म...' : 'Add Product Form...')}
+              onPress={() => router.push({ pathname: '/add-product', params: { lang: selectedLang } })}
               activeOpacity={0.85}
             >
               <Ionicons name="add" size={20} color="#FFFFFF" style={{ marginRight: 4 }} />
@@ -226,7 +226,7 @@ export default function ProductsScreen() {
 
             <TouchableOpacity
               style={styles.bannerAddBtn}
-              onPress={() => alert(isHindi ? 'नया उत्पाद जोड़ने का फॉर्म...' : 'Add product form...')}
+              onPress={() => router.push({ pathname: '/add-product', params: { lang: selectedLang } })}
               activeOpacity={0.85}
             >
               <Ionicons name="add" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />

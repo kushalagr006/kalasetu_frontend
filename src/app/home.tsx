@@ -142,7 +142,7 @@ export default function HomeScreen() {
           {/* Primary CTA Button: Add New Product */}
           <TouchableOpacity
             style={styles.addProductButton}
-            onPress={() => alert(t.addProductAlert)}
+            onPress={() => router.push({ pathname: '/add-product', params: { lang: selectedLang } })}
             activeOpacity={0.88}
           >
             <View style={styles.plusIconCircle}>

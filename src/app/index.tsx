@@ -123,11 +123,9 @@ export default function LoginScreen() {
           <View style={styles.brandContainer}>
             <Image
               source={require('@/assets/images/logo_icon.png')}
-              style={styles.logoIcon}
+              style={styles.logoImage}
               resizeMode="contain"
             />
-            <Text style={styles.brandTitle}>कलासेतु</Text>
-            <Text style={styles.brandTagline}>{t.tagline}</Text>
           </View>
 
           {/* Village Scenic Landscape Banner */}
@@ -321,25 +319,12 @@ const styles = StyleSheet.create({
   /* Brand Container */
   brandContainer: {
     alignItems: 'center',
-    marginTop: 2,
-    marginBottom: 8,
+    marginTop: 4,
+    marginBottom: 4,
   },
-  logoIcon: {
-    width: 75,
-    height: 75,
-    marginBottom: 2,
-  },
-  brandTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#4E342E',
-    letterSpacing: 0.5,
-  },
-  brandTagline: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#3B6029',
-    marginTop: 1,
+  logoImage: {
+    width: 220,
+    height: 170,
   },
   /* Banner Image */
   bannerWrapper: {

@@ -28,18 +28,21 @@ const TRANSLATIONS: Record<LangCode, {
   location: string;
   members: string;
   joined: string;
-  editBtn: string;
-  contactHeader: string;
-  phoneLabel: string;
-  emailLabel: string;
-  addressLabel: string;
-  addressVal: string;
-  shgHeader: string;
-  craftLabel: string;
-  craftVal: string;
-  memberCountLabel: string;
-  aboutLabel: string;
-  aboutVal: string;
+  editProfile: string;
+  aboutTitle: string;
+  aboutBody: string;
+  whatWeMakeTitle: string;
+  categoryCount: string;
+  whatWeMakeBody: string;
+  metricProducts: string;
+  metricOrders: string;
+  metricTenders: string;
+  metricEarnings: string;
+  quickActions: string;
+  qaAddProduct: string;
+  qaMyProducts: string;
+  qaMyOrders: string;
+  qaMyTenders: string;
   logoutBtn: string;
   logoutTitle: string;
   logoutMsg: string;
@@ -52,52 +55,58 @@ const TRANSLATIONS: Record<LangCode, {
   modalTitle: string;
 }> = {
   hi: {
-    headerTitle: 'प्रोफ़ाइल',
+    headerTitle: 'मेरा SHG',
     shgName: 'सखी महिला SHG',
-    location: 'रामपुर, धमतरी',
+    location: 'रामपुर गांव, धमतरी',
     members: '12 सदस्य',
-    joined: 'जुड़ी: मई 2025',
-    editBtn: 'संपादित करें',
-    contactHeader: 'संपर्क जानकारी',
-    phoneLabel: 'मोबाइल नंबर',
-    emailLabel: 'ईमेल (यदि है)',
-    addressLabel: 'पूरा पता',
-    addressVal: 'रामपुर गांव, धमतरी,\nछत्तीसगढ़ - 493773',
-    shgHeader: 'SHG विवरण',
-    craftLabel: 'हस्तशिल्प प्रकार',
-    craftVal: 'हैंडिक्राफ्ट आइटम',
-    memberCountLabel: 'सदस्य संख्या',
-    aboutLabel: 'हमारे बारे में',
-    aboutVal: 'हम सुंदर और गुणवत्तापूर्ण हस्तनिर्मित उत्पाद बनाते हैं।',
+    joined: 'जुड़े: मई 2025',
+    editProfile: 'प्रोफ़ाइल बदलें',
+    aboutTitle: 'हमारे SHG के बारे में',
+    aboutBody: 'हम रामपुर गांव की 12 कुशल महिला कारीगरों का समूह हैं जो बांस कला और हस्तनिर्मित गृह सजावट उत्पाद बनाते हैं।',
+    whatWeMakeTitle: 'हम क्या बनाते हैं',
+    categoryCount: '1 श्रेणी',
+    whatWeMakeBody: 'बांस के शिल्प, टोकरियां, डिब्बे और सजावटी दीवार लटकन।',
+    metricProducts: 'उत्पाद',
+    metricOrders: 'ऑर्डर',
+    metricTenders: 'टेंडर',
+    metricEarnings: 'कुल कमाई',
+    quickActions: 'त्वरित कार्य',
+    qaAddProduct: 'उत्पाद जोड़ें',
+    qaMyProducts: 'मेरे उत्पाद',
+    qaMyOrders: 'मेरे ऑर्डर',
+    qaMyTenders: 'मेरे टेंडर',
     logoutBtn: 'लॉग आउट (Log Out)',
     logoutTitle: 'लॉग आउट करें?',
     logoutMsg: 'क्या आप सचमुच ऐप से लॉग आउट करना चाहते हैं?',
     cancel: 'रद्द करें',
     navHome: 'होम',
-    navMySHG: 'मेरी SHG',
+    navMySHG: 'मेरा SHG',
     navProducts: 'उत्पाद',
     navOrders: 'ऑर्डर',
     navProfile: 'प्रोफ़ाइल',
     modalTitle: 'भाषा चुनें / Select Language',
   },
   en: {
-    headerTitle: 'Profile',
-    shgName: 'Sakhi Women SHG',
-    location: 'Rampur, Dhamtari',
+    headerTitle: 'MY SHG',
+    shgName: 'SAKHI WOMEN SHG',
+    location: 'Rampur Village, Dhamtari',
     members: '12 Members',
     joined: 'Joined May 2025',
-    editBtn: 'Edit Profile',
-    contactHeader: 'Contact Information',
-    phoneLabel: 'Mobile Number',
-    emailLabel: 'Email (Optional)',
-    addressLabel: 'Full Address',
-    addressVal: 'Rampur Village, Dhamtari,\nChhattisgarh - 493773',
-    shgHeader: 'SHG Details',
-    craftLabel: 'Craft Type',
-    craftVal: 'Handicraft Items',
-    memberCountLabel: 'Member Count',
-    aboutLabel: 'About Us',
-    aboutVal: 'We craft beautiful, high-quality handmade products.',
+    editProfile: 'Edit Profile',
+    aboutTitle: 'About Our SHG',
+    aboutBody: 'We are a collective of 12 skilled women artisans from Rampur village creating authentic bamboo craft and handmade home decor products.',
+    whatWeMakeTitle: 'What We Make',
+    categoryCount: '1 Category',
+    whatWeMakeBody: 'Bamboo Crafts, Baskets, Storage Containers & Decorative Wall Hangings.',
+    metricProducts: 'Products',
+    metricOrders: 'Orders',
+    metricTenders: 'Tenders',
+    metricEarnings: 'Earnings',
+    quickActions: 'Quick Actions',
+    qaAddProduct: 'Add Product',
+    qaMyProducts: 'My Products',
+    qaMyOrders: 'My Orders',
+    qaMyTenders: 'My Tenders',
     logoutBtn: 'Log Out',
     logoutTitle: 'Log Out?',
     logoutMsg: 'Are you sure you want to log out?',
@@ -111,14 +120,14 @@ const TRANSLATIONS: Record<LangCode, {
   },
 };
 
-export default function ProfileScreen() {
+export default function MySHGProfileScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ lang?: string }>();
   const initialLang: LangCode = (params.lang as LangCode) || 'hi';
 
   const [selectedLang, setSelectedLang] = useState<LangCode>(initialLang);
   const [isLangModalVisible, setIsLangModalVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState<'home' | 'myshg' | 'products' | 'orders' | 'profile'>('profile');
+  const [activeTab, setActiveTab] = useState<'home' | 'myshg' | 'products' | 'orders' | 'profile'>('myshg');
 
   const t = TRANSLATIONS[selectedLang];
   const currentLangLabel = LANGUAGES.find((l) => l.code === selectedLang)?.label || 'हिंदी';
@@ -129,8 +138,8 @@ export default function ProfileScreen() {
       <View style={styles.container}>
         {/* Top Header Bar */}
         <View style={styles.topGreenHeader}>
-          <TouchableOpacity style={styles.headerIconBtn} activeOpacity={0.7}>
-            <Ionicons name="menu-outline" size={26} color="#FFFFFF" />
+          <TouchableOpacity style={styles.headerIconBtn} onPress={() => router.back()} activeOpacity={0.7}>
+            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
           </TouchableOpacity>
 
           <Text style={styles.headerTitle}>{t.headerTitle}</Text>
@@ -145,105 +154,146 @@ export default function ProfileScreen() {
             <Text style={styles.langSelectorText}>{currentLangLabel}</Text>
             <Ionicons name="chevron-down" size={12} color="#3B6029" />
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.headerIconBtn}
-            onPress={() => router.push({ pathname: '/notifications', params: { lang: selectedLang } })}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="notifications" size={22} color="#FFFFFF" />
-          </TouchableOpacity>
         </View>
 
-        {/* Scrollable Body Content */}
+        {/* Scrollable Main Content */}
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Top Profile Hero Card */}
-          <View style={styles.profileHeroCard}>
+          {/* SAKHI SHG Hero Card */}
+          <View style={styles.shgHeroCard}>
             <View style={styles.heroTopRow}>
-              <View style={styles.womenAvatarGroupCircle}>
+              <View style={styles.heroAvatarCircle}>
                 <Ionicons name="people" size={38} color="#3B6029" />
               </View>
 
               <View style={{ flex: 1 }}>
-                <Text style={styles.shgTitleText}>{t.shgName}</Text>
+                <Text style={styles.shgNameTitle}>{t.shgName}</Text>
 
-                <View style={styles.infoMetaRow}>
+                <View style={styles.heroMetaRow}>
                   <Ionicons name="location-outline" size={14} color="#3B6029" />
-                  <Text style={styles.infoMetaText}>{t.location}</Text>
+                  <Text style={styles.heroMetaText}>{t.location}</Text>
                 </View>
 
-                <View style={styles.infoMetaRow}>
+                <View style={styles.heroMetaRow}>
                   <Ionicons name="people-outline" size={14} color="#3B6029" />
-                  <Text style={styles.infoMetaText}>{t.members}</Text>
+                  <Text style={styles.heroMetaText}>{t.members}</Text>
                 </View>
 
-                <View style={styles.infoMetaRow}>
+                <View style={styles.heroMetaRow}>
                   <Ionicons name="calendar-outline" size={14} color="#3B6029" />
-                  <Text style={styles.infoMetaText}>{t.joined}</Text>
+                  <Text style={styles.heroMetaText}>{t.joined}</Text>
                 </View>
               </View>
             </View>
 
-            <TouchableOpacity style={styles.editProfileBtn} activeOpacity={0.8}>
+            <TouchableOpacity style={styles.editBtnPill} activeOpacity={0.8}>
               <Ionicons name="pencil-outline" size={15} color="#3B6029" />
-              <Text style={styles.editProfileBtnText}>{t.editBtn}</Text>
+              <Text style={styles.editBtnText}>{t.editProfile}</Text>
             </TouchableOpacity>
           </View>
 
-          {/* संपर्क जानकारी Section */}
-          <Text style={styles.sectionHeaderTitle}>{t.contactHeader}</Text>
-          <View style={styles.infoCardBox}>
-            <View style={styles.infoRowItem}>
-              <Ionicons name="call-outline" size={20} color="#3B6029" style={styles.rowIcon} />
-              <Text style={styles.rowLabelText}>{t.phoneLabel}</Text>
-              <Text style={styles.rowValueText}>+91 98765 43210</Text>
+          {/* About Our SHG Card */}
+          <View style={styles.infoCardSection}>
+            <View style={styles.infoCardHeader}>
+              <Ionicons name="information-circle-outline" size={20} color="#3B6029" />
+              <Text style={styles.infoCardTitle}>{t.aboutTitle}</Text>
             </View>
+            <Text style={styles.infoCardBody}>{t.aboutBody}</Text>
+          </View>
 
-            <View style={styles.rowDividerLine} />
-
-            <View style={styles.infoRowItem}>
-              <Ionicons name="mail-outline" size={20} color="#3B6029" style={styles.rowIcon} />
-              <Text style={styles.rowLabelText}>{t.emailLabel}</Text>
-              <Text style={styles.rowValueText}>sakhi.shg@gmail.com</Text>
+          {/* What We Make Card */}
+          <View style={styles.infoCardSection}>
+            <View style={styles.infoCardHeaderRow}>
+              <View style={styles.infoCardHeader}>
+                <Ionicons name="basket-outline" size={20} color="#3B6029" />
+                <Text style={styles.infoCardTitle}>{t.whatWeMakeTitle}</Text>
+              </View>
+              <View style={styles.greenBadgePill}>
+                <Text style={styles.greenBadgeText}>{t.categoryCount}</Text>
+              </View>
             </View>
+            <Text style={styles.infoCardBody}>{t.whatWeMakeBody}</Text>
+          </View>
 
-            <View style={styles.rowDividerLine} />
+          {/* 4 Metrics Containers Grid */}
+          <View style={styles.metricsContainerGrid}>
+            <View style={styles.metricsRow}>
+              <View style={styles.metricCard}>
+                <Text style={styles.metricValNumber}>18</Text>
+                <Text style={styles.metricLabelText}>{t.metricProducts}</Text>
+              </View>
 
-            <View style={styles.infoRowItem}>
-              <Ionicons name="location-outline" size={20} color="#3B6029" style={styles.rowIcon} />
-              <Text style={styles.rowLabelText}>{t.addressLabel}</Text>
-              <Text style={styles.rowValueAddressText}>{t.addressVal}</Text>
+              <View style={styles.metricCard}>
+                <Text style={styles.metricValNumber}>23</Text>
+                <Text style={styles.metricLabelText}>{t.metricOrders}</Text>
+              </View>
+
+              <View style={styles.metricCard}>
+                <Text style={styles.metricValNumber}>3</Text>
+                <Text style={styles.metricLabelText}>{t.metricTenders}</Text>
+              </View>
+
+              <View style={styles.metricCard}>
+                <Text style={styles.metricValCurrency}>₹18,450</Text>
+                <Text style={styles.metricLabelText}>{t.metricEarnings}</Text>
+              </View>
             </View>
           </View>
 
-          {/* SHG विवरण Section */}
-          <Text style={styles.sectionHeaderTitle}>{t.shgHeader}</Text>
-          <View style={styles.infoCardBox}>
-            <View style={styles.infoRowItem}>
-              <Ionicons name="basket-outline" size={20} color="#3B6029" style={styles.rowIcon} />
-              <Text style={styles.rowLabelText}>{t.craftLabel}</Text>
-              <Text style={styles.rowValueText}>{t.craftVal}</Text>
-            </View>
+          {/* Quick Actions Row */}
+          <Text style={styles.sectionHeaderTitle}>{t.quickActions}</Text>
 
-            <View style={styles.rowDividerLine} />
+          <View style={styles.quickActionCardsRow}>
+            {/* 1. Add Product */}
+            <TouchableOpacity
+              style={styles.qaCardItem}
+              onPress={() => router.push({ pathname: '/add-product', params: { lang: selectedLang } })}
+              activeOpacity={0.85}
+            >
+              <View style={styles.qaIconCircleSquare}>
+                <Ionicons name="bag-add-outline" size={28} color="#3B6029" />
+              </View>
+              <Text style={styles.qaCardLabel}>{t.qaAddProduct}</Text>
+            </TouchableOpacity>
 
-            <View style={styles.infoRowItem}>
-              <Ionicons name="people-outline" size={20} color="#3B6029" style={styles.rowIcon} />
-              <Text style={styles.rowLabelText}>{t.memberCountLabel}</Text>
-              <Text style={styles.rowValueText}>12</Text>
-            </View>
+            {/* 2. My Products */}
+            <TouchableOpacity
+              style={styles.qaCardItem}
+              onPress={() => router.push({ pathname: '/products', params: { lang: selectedLang } })}
+              activeOpacity={0.85}
+            >
+              <View style={styles.qaIconCircleSquare}>
+                <Ionicons name="cube-outline" size={28} color="#3B6029" />
+              </View>
+              <Text style={styles.qaCardLabel}>{t.qaMyProducts}</Text>
+            </TouchableOpacity>
 
-            <View style={styles.rowDividerLine} />
+            {/* 3. My Orders */}
+            <TouchableOpacity
+              style={styles.qaCardItem}
+              onPress={() => router.push({ pathname: '/orders', params: { lang: selectedLang } })}
+              activeOpacity={0.85}
+            >
+              <View style={styles.qaIconCircleSquare}>
+                <Ionicons name="clipboard-outline" size={28} color="#3B6029" />
+              </View>
+              <Text style={styles.qaCardLabel}>{t.qaMyOrders}</Text>
+            </TouchableOpacity>
 
-            <View style={styles.infoRowItem}>
-              <Ionicons name="information-circle-outline" size={20} color="#3B6029" style={styles.rowIcon} />
-              <Text style={styles.rowLabelText}>{t.aboutLabel}</Text>
-              <Text style={styles.rowValueBodyText}>{t.aboutVal}</Text>
-            </View>
+            {/* 4. My Tenders */}
+            <TouchableOpacity
+              style={styles.qaCardItem}
+              onPress={() => router.push({ pathname: '/web-active-tenders', params: { lang: selectedLang } })}
+              activeOpacity={0.85}
+            >
+              <View style={styles.qaIconCircleSquare}>
+                <Ionicons name="hammer-outline" size={28} color="#3B6029" />
+              </View>
+              <Text style={styles.qaCardLabel}>{t.qaMyTenders}</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Log Out Button */}
@@ -281,9 +331,9 @@ export default function ProfileScreen() {
           </TouchableOpacity>
 
           {/* 2. My SHG */}
-          <TouchableOpacity style={styles.tabBarItem} onPress={() => router.push({ pathname: '/shg-profile', params: { lang: selectedLang } })}>
-            <Ionicons name="people-outline" size={24} color="#666666" />
-            <Text style={styles.tabBarLabel}>{t.navMySHG}</Text>
+          <TouchableOpacity style={[styles.tabBarItem, styles.tabBarItemActivePill]} onPress={() => setActiveTab('myshg')}>
+            <Ionicons name="people" size={24} color="#3B6029" />
+            <Text style={[styles.tabBarLabel, styles.tabBarLabelActive]}>{t.navMySHG}</Text>
           </TouchableOpacity>
 
           {/* 3. Products */}
@@ -299,9 +349,9 @@ export default function ProfileScreen() {
           </TouchableOpacity>
 
           {/* 5. Profile */}
-          <TouchableOpacity style={[styles.tabBarItem, styles.tabBarItemActivePill]} onPress={() => setActiveTab('profile')}>
-            <Ionicons name="person" size={24} color="#3B6029" />
-            <Text style={[styles.tabBarLabel, styles.tabBarLabelActive]}>{t.navProfile}</Text>
+          <TouchableOpacity style={styles.tabBarItem} onPress={() => router.push({ pathname: '/profile', params: { lang: selectedLang } })}>
+            <Ionicons name="person-outline" size={24} color="#666666" />
+            <Text style={styles.tabBarLabel}>{t.navProfile}</Text>
           </TouchableOpacity>
         </View>
 
@@ -398,7 +448,7 @@ const styles = StyleSheet.create({
     color: '#3B6029',
   },
 
-  /* Scrollable Body */
+  /* Scrollable Body Content */
   scrollView: {
     flex: 1,
   },
@@ -408,8 +458,8 @@ const styles = StyleSheet.create({
     gap: 14,
   },
 
-  /* Profile Hero Card */
-  profileHeroCard: {
+  /* Hero Card */
+  shgHeroCard: {
     backgroundColor: '#F0F7ED',
     borderRadius: 20,
     padding: 18,
@@ -422,31 +472,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 14,
   },
-  womenAvatarGroupCircle: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+  heroAvatarCircle: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
     backgroundColor: '#EAF2E8',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  shgTitleText: {
+  shgNameTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#1A1A1A',
     marginBottom: 4,
   },
-  infoMetaRow: {
+  heroMetaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
     marginTop: 2,
   },
-  infoMetaText: {
+  heroMetaText: {
     fontSize: 12,
     color: '#3B6029',
   },
-  editProfileBtn: {
+  editBtnPill: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -460,65 +510,126 @@ const styles = StyleSheet.create({
     gap: 6,
     marginTop: -10,
   },
-  editProfileBtnText: {
+  editBtnText: {
     fontSize: 12,
     fontWeight: 'bold',
     color: '#3B6029',
   },
 
+  /* Info Cards */
+  infoCardSection: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#EBEBEB',
+    gap: 8,
+  },
+  infoCardHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  infoCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  infoCardTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+  },
+  greenBadgePill: {
+    backgroundColor: '#F0F7ED',
+    borderRadius: 8,
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+  },
+  greenBadgeText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#3B6029',
+  },
+  infoCardBody: {
+    fontSize: 13,
+    color: '#555555',
+    lineHeight: 18,
+  },
+
+  /* Metrics Grid */
+  metricsContainerGrid: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#EBEBEB',
+    padding: 14,
+  },
+  metricsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  metricCard: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  metricValNumber: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#3B6029',
+  },
+  metricValCurrency: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#3B6029',
+  },
+  metricLabelText: {
+    fontSize: 11,
+    color: '#666666',
+    marginTop: 2,
+  },
+
   /* Section Title */
   sectionHeaderTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#3B6029',
     marginTop: 4,
   },
 
-  /* Info Card Box Container */
-  infoCardBox: {
+  /* Quick Actions Row */
+  quickActionCardsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  qaCardItem: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#EBEBEB',
-    paddingVertical: 4,
-  },
-  infoRowItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
     paddingVertical: 14,
-    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
   },
-  rowIcon: {
-    marginRight: 12,
+  qaIconCircleSquare: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: '#F0F7ED',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  rowLabelText: {
-    fontSize: 13,
-    color: '#555555',
-    flex: 1,
-  },
-  rowValueText: {
-    fontSize: 13,
+  qaCardLabel: {
+    fontSize: 11,
     fontWeight: 'bold',
     color: '#1A1A1A',
-  },
-  rowValueAddressText: {
-    fontSize: 13,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
-    textAlign: 'right',
-    lineHeight: 18,
-  },
-  rowValueBodyText: {
-    fontSize: 12,
-    color: '#333333',
-    flex: 1.5,
-    textAlign: 'right',
-    lineHeight: 16,
-  },
-  rowDividerLine: {
-    height: 1,
-    backgroundColor: '#F0F0F0',
-    marginHorizontal: 16,
+    textAlign: 'center',
   },
 
   /* Logout Button */

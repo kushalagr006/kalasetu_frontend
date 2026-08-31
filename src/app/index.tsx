@@ -196,7 +196,11 @@ export default function LoginScreen() {
             </View>
 
             {/* Special SHG Women Card */}
-            <TouchableOpacity style={styles.shgCard} activeOpacity={0.88}>
+            <TouchableOpacity
+              style={styles.shgCard}
+              activeOpacity={0.88}
+              onPress={() => router.push('/shg-login' as any)}
+            >
               <Image
                 source={require('@/assets/images/shg_women.png')}
                 style={styles.shgAvatar}

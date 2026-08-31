@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 
 type LangCode = 'hi' | 'en';
+type OrderFilter = 'all' | 'accepted' | 'processing' | 'completed';
 
 const LANGUAGES: { code: LangCode; label: string }[] = [
   { code: 'hi', label: 'हिंदी' },
@@ -23,14 +24,15 @@ const LANGUAGES: { code: LangCode; label: string }[] = [
 
 const TRANSLATIONS: Record<LangCode, {
   headerTitle: string;
-  totalProducts: string;
-  activeStatus: string;
-  stockPrefix: string;
-  pieceSuffix: string;
-  actionView: string;
-  actionEdit: string;
-  actionMore: string;
-  addNewProduct: string;
+  filterAll: string;
+  filterAccepted: string;
+  filterProcessing: string;
+  filterCompleted: string;
+  orderIdPrefix: string;
+  datePrefix: string;
+  itemPrefix: string;
+  qtyPrefix: string;
+  viewHistory: string;
   navHome: string;
   navMySHG: string;
   navProducts: string;
@@ -39,15 +41,16 @@ const TRANSLATIONS: Record<LangCode, {
   modalTitle: string;
 }> = {
   hi: {
-    headerTitle: 'मेरे उत्पाद',
-    totalProducts: 'कुल उत्पाद: 18',
-    activeStatus: 'सक्रिय',
-    stockPrefix: 'स्टॉक: ',
-    pieceSuffix: ' पीस',
-    actionView: 'देखें',
-    actionEdit: 'संपादित करें',
-    actionMore: 'और',
-    addNewProduct: 'नया उत्पाद जोड़ें',
+    headerTitle: 'मेरे ऑर्डर',
+    filterAll: 'सभी',
+    filterAccepted: 'स्वीकृत',
+    filterProcessing: 'तैयारी में',
+    filterCompleted: 'पूर्ण',
+    orderIdPrefix: 'ऑर्डर ID: ',
+    datePrefix: 'दिनांक: ',
+    itemPrefix: 'आइटम: ',
+    qtyPrefix: 'मात्रा: ',
+    viewHistory: 'ऑर्डर इतिहास देखें',
     navHome: 'होम',
     navMySHG: 'मेरी SHG',
     navProducts: 'उत्पाद',
@@ -56,15 +59,16 @@ const TRANSLATIONS: Record<LangCode, {
     modalTitle: 'भाषा चुनें / Select Language',
   },
   en: {
-    headerTitle: 'My Products',
-    totalProducts: 'Total Products: 18',
-    activeStatus: 'Active',
-    stockPrefix: 'Stock: ',
-    pieceSuffix: ' pcs',
-    actionView: 'View',
-    actionEdit: 'Edit',
-    actionMore: 'More',
-    addNewProduct: 'Add New Product',
+    headerTitle: 'My Orders',
+    filterAll: 'All',
+    filterAccepted: 'Accepted',
+    filterProcessing: 'In Prep',
+    filterCompleted: 'Completed',
+    orderIdPrefix: 'Order ID: ',
+    datePrefix: 'Date: ',
+    itemPrefix: 'Item: ',
+    qtyPrefix: 'Qty: ',
+    viewHistory: 'View Order History',
     navHome: 'Home',
     navMySHG: 'My SHG',
     navProducts: 'Products',
@@ -74,69 +78,98 @@ const TRANSLATIONS: Record<LangCode, {
   },
 };
 
-interface ProductItem {
+interface OrderItem {
   id: string;
-  nameHi: string;
-  nameEn: string;
+  orderId: string;
+  dateHi: string;
+  dateEn: string;
+  itemHi: string;
+  itemEn: string;
+  qtyHi: string;
+  qtyEn: string;
   price: string;
-  stockQty: number;
+  status: 'accepted' | 'processing' | 'completed';
+  statusTextHi: string;
+  statusTextEn: string;
   image: any;
 }
 
-const PRODUCTS_LIST: ProductItem[] = [
+const ORDERS_LIST: OrderItem[] = [
   {
     id: '1',
-    nameHi: 'बांस की टोकरी',
-    nameEn: 'Bamboo Basket',
-    price: '₹350',
-    stockQty: 45,
+    orderId: 'ORD1234',
+    dateHi: '20 मई 2025',
+    dateEn: '20 May 2025',
+    itemHi: 'बांस की टोकरी',
+    itemEn: 'Bamboo Basket',
+    qtyHi: '25 पीस',
+    qtyEn: '25 pcs',
+    price: '₹ 8,750',
+    status: 'accepted',
+    statusTextHi: 'स्वीकृत',
+    statusTextEn: 'Accepted',
     image: require('@/assets/images/product_basket.png'),
   },
   {
     id: '2',
-    nameHi: 'बांस का डिब्बा',
-    nameEn: 'Bamboo Box Container',
-    price: '₹450',
-    stockQty: 30,
+    orderId: 'ORD1233',
+    dateHi: '18 मई 2025',
+    dateEn: '18 May 2025',
+    itemHi: 'बांस का डिब्बा',
+    itemEn: 'Bamboo Box Container',
+    qtyHi: '40 पीस',
+    qtyEn: '40 pcs',
+    price: '₹ 18,000',
+    status: 'processing',
+    statusTextHi: 'तैयारी में',
+    statusTextEn: 'In Prep',
     image: require('@/assets/images/product_pot.png'),
   },
   {
     id: '3',
-    nameHi: 'दीवार सजावट',
-    nameEn: 'Wall Hanging Decor',
-    price: '₹250',
-    stockQty: 60,
+    orderId: 'ORD1232',
+    dateHi: '10 मई 2025',
+    dateEn: '10 May 2025',
+    itemHi: 'दीवार सजावट',
+    itemEn: 'Wall Hanging Decor',
+    qtyHi: '15 पीस',
+    qtyEn: '15 pcs',
+    price: '₹ 3,750',
+    status: 'completed',
+    statusTextHi: 'पूर्ण',
+    statusTextEn: 'Completed',
     image: require('@/assets/images/product_macrame.png'),
-  },
-  {
-    id: '4',
-    nameHi: 'मिट्टी का घड़ा',
-    nameEn: 'Terracotta Clay Pot',
-    price: '₹450',
-    stockQty: 15,
-    image: require('@/assets/images/product_pot.png'),
-  },
-  {
-    id: '5',
-    nameHi: 'हैंडमेड कपड़ा बैग',
-    nameEn: 'Handmade Fabric Bag',
-    price: '₹550',
-    stockQty: 25,
-    image: require('@/assets/images/product_bag.png'),
   },
 ];
 
-export default function ProductsScreen() {
+export default function OrdersScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ lang?: string }>();
   const initialLang: LangCode = (params.lang as LangCode) || 'hi';
 
   const [selectedLang, setSelectedLang] = useState<LangCode>(initialLang);
   const [isLangModalVisible, setIsLangModalVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState<'home' | 'myshg' | 'products' | 'orders' | 'profile'>('products');
+  const [activeFilter, setActiveFilter] = useState<OrderFilter>('all');
+  const [activeTab, setActiveTab] = useState<'home' | 'myshg' | 'products' | 'orders' | 'profile'>('orders');
 
   const t = TRANSLATIONS[selectedLang];
   const currentLangLabel = LANGUAGES.find((l) => l.code === selectedLang)?.label || 'हिंदी';
+
+  const filteredOrders = ORDERS_LIST.filter((o) => {
+    if (activeFilter === 'all') return true;
+    return o.status === activeFilter;
+  });
+
+  const getStatusBadgeStyle = (status: OrderItem['status']) => {
+    switch (status) {
+      case 'accepted':
+        return { bg: '#F0F7ED', text: '#3B6029' };
+      case 'processing':
+        return { bg: '#FFF3E0', text: '#E65100' };
+      case 'completed':
+        return { bg: '#E1F5FE', text: '#0288D1' };
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -144,8 +177,8 @@ export default function ProductsScreen() {
       <View style={styles.container}>
         {/* Top Header Bar */}
         <View style={styles.topGreenHeader}>
-          <TouchableOpacity style={styles.headerIconBtn} onPress={() => router.back()} activeOpacity={0.7}>
-            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
+          <TouchableOpacity style={styles.headerIconBtn} activeOpacity={0.7}>
+            <Ionicons name="menu-outline" size={26} color="#FFFFFF" />
           </TouchableOpacity>
 
           <Text style={styles.headerTitle}>{t.headerTitle}</Text>
@@ -163,10 +196,41 @@ export default function ProductsScreen() {
 
           <TouchableOpacity
             style={styles.headerIconBtn}
-            onPress={() => router.push({ pathname: '/add-product', params: { lang: selectedLang } })}
+            onPress={() => router.push({ pathname: '/notifications', params: { lang: selectedLang } })}
             activeOpacity={0.7}
           >
-            <Ionicons name="add" size={28} color="#FFFFFF" />
+            <Ionicons name="notifications" size={22} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Order Filter Tabs Bar */}
+        <View style={styles.filterTabsBar}>
+          <TouchableOpacity
+            style={[styles.filterTabItem, activeFilter === 'all' && styles.filterTabItemActive]}
+            onPress={() => setActiveFilter('all')}
+          >
+            <Text style={[styles.filterTabText, activeFilter === 'all' && styles.filterTabTextActive]}>{t.filterAll}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.filterTabItem, activeFilter === 'accepted' && styles.filterTabItemActive]}
+            onPress={() => setActiveFilter('accepted')}
+          >
+            <Text style={[styles.filterTabText, activeFilter === 'accepted' && styles.filterTabTextActive]}>{t.filterAccepted}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.filterTabItem, activeFilter === 'processing' && styles.filterTabItemActive]}
+            onPress={() => setActiveFilter('processing')}
+          >
+            <Text style={[styles.filterTabText, activeFilter === 'processing' && styles.filterTabTextActive]}>{t.filterProcessing}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.filterTabItem, activeFilter === 'completed' && styles.filterTabItemActive]}
+            onPress={() => setActiveFilter('completed')}
+          >
+            <Text style={[styles.filterTabText, activeFilter === 'completed' && styles.filterTabTextActive]}>{t.filterCompleted}</Text>
           </TouchableOpacity>
         </View>
 
@@ -176,63 +240,55 @@ export default function ProductsScreen() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Total Count Header */}
-          <Text style={styles.totalCountHeader}>{t.totalProducts}</Text>
+          {/* Order Cards List */}
+          <View style={styles.ordersListGroup}>
+            {filteredOrders.map((order) => {
+              const badgeStyle = getStatusBadgeStyle(order.status);
+              return (
+                <TouchableOpacity key={order.id} style={styles.orderCard} activeOpacity={0.88}>
+                  <View style={styles.orderCardContentRow}>
+                    <Image source={order.image} style={styles.orderImage} resizeMode="cover" />
 
-          {/* Product Items List */}
-          <View style={styles.productListGroup}>
-            {PRODUCTS_LIST.map((item) => (
-              <View key={item.id} style={styles.productCard}>
-                <View style={styles.productMainRow}>
-                  <Image source={item.image} style={styles.productImage} resizeMode="cover" />
-
-                  <View style={{ flex: 1 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <Text style={styles.productNameText}>{selectedLang === 'hi' ? item.nameHi : item.nameEn}</Text>
-                      <View style={styles.activeStatusBadge}>
-                        <Text style={styles.activeStatusText}>{t.activeStatus}</Text>
+                    <View style={{ flex: 1 }}>
+                      <View style={styles.orderHeaderMetaRow}>
+                        <Text style={styles.orderIdText}>{t.orderIdPrefix}{order.orderId}</Text>
+                        <View style={[styles.statusBadgePill, { backgroundColor: badgeStyle.bg }]}>
+                          <Text style={[styles.statusBadgeText, { color: badgeStyle.text }]}>
+                            {selectedLang === 'hi' ? order.statusTextHi : order.statusTextEn}
+                          </Text>
+                        </View>
                       </View>
+
+                      <View style={styles.orderMetaItemRow}>
+                        <Ionicons name="calendar-outline" size={14} color="#666666" />
+                        <Text style={styles.orderMetaText}>{t.datePrefix}{selectedLang === 'hi' ? order.dateHi : order.dateEn}</Text>
+                      </View>
+
+                      <View style={styles.orderMetaItemRow}>
+                        <Ionicons name="person-outline" size={14} color="#666666" />
+                        <Text style={styles.orderMetaText}>{t.itemPrefix}{selectedLang === 'hi' ? order.itemHi : order.itemEn}</Text>
+                      </View>
+
+                      <View style={styles.orderMetaItemRow}>
+                        <Ionicons name="cube-outline" size={14} color="#666666" />
+                        <Text style={styles.orderMetaText}>{t.qtyPrefix}{selectedLang === 'hi' ? order.qtyHi : order.qtyEn}</Text>
+                      </View>
+
+                      <Text style={styles.orderPriceText}>{order.price}</Text>
                     </View>
 
-                    <Text style={styles.productPriceText}>{item.price}</Text>
-                    <Text style={styles.productStockText}>{t.stockPrefix}{item.stockQty}{t.pieceSuffix}</Text>
+                    <Ionicons name="chevron-forward" size={20} color="#777777" style={{ alignSelf: 'center' }} />
                   </View>
-                </View>
-
-                <View style={styles.cardDividerLine} />
-
-                <View style={styles.cardActionBar}>
-                  <TouchableOpacity style={styles.cardActionItem} activeOpacity={0.7}>
-                    <Ionicons name="eye-outline" size={16} color="#3B6029" />
-                    <Text style={styles.cardActionText}>{t.actionView}</Text>
-                  </TouchableOpacity>
-
-                  <View style={styles.actionDividerLine} />
-
-                  <TouchableOpacity style={styles.cardActionItem} activeOpacity={0.7}>
-                    <Ionicons name="pencil-outline" size={15} color="#3B6029" />
-                    <Text style={styles.cardActionText}>{t.actionEdit}</Text>
-                  </TouchableOpacity>
-
-                  <View style={styles.actionDividerLine} />
-
-                  <TouchableOpacity style={styles.cardActionItem} activeOpacity={0.7}>
-                    <Ionicons name="ellipsis-horizontal" size={16} color="#3B6029" />
-                    <Text style={styles.cardActionText}>{t.actionMore}</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))}
+                </TouchableOpacity>
+              );
+            })}
           </View>
 
-          {/* Primary Outlined Add Product Button */}
-          <TouchableOpacity
-            style={styles.outlinedAddProductBtn}
-            onPress={() => router.push({ pathname: '/add-product', params: { lang: selectedLang } })}
-            activeOpacity={0.85}
-          >
-            <Ionicons name="add" size={20} color="#3B6029" style={{ marginRight: 6 }} />
-            <Text style={styles.outlinedAddProductBtnText}>{t.addNewProduct}</Text>
+          {/* Outlined View Order History Button */}
+          <TouchableOpacity style={styles.outlinedHistoryBtn} activeOpacity={0.85}>
+            <Ionicons name="calendar-outline" size={18} color="#3B6029" style={{ marginRight: 6 }} />
+            <Text style={styles.outlinedHistoryBtnText}>{t.viewHistory}</Text>
+            <Ionicons name="chevron-forward" size={18} color="#3B6029" style={{ marginLeft: 4 }} />
           </TouchableOpacity>
         </ScrollView>
 
@@ -251,15 +307,15 @@ export default function ProductsScreen() {
           </TouchableOpacity>
 
           {/* 3. Products */}
-          <TouchableOpacity style={[styles.tabBarItem, styles.tabBarItemActivePill]} onPress={() => setActiveTab('products')}>
-            <Ionicons name="bag-handle" size={24} color="#3B6029" />
-            <Text style={[styles.tabBarLabel, styles.tabBarLabelActive]}>{t.navProducts}</Text>
+          <TouchableOpacity style={styles.tabBarItem} onPress={() => router.push({ pathname: '/products', params: { lang: selectedLang } })}>
+            <Ionicons name="bag-handle-outline" size={24} color="#666666" />
+            <Text style={styles.tabBarLabel}>{t.navProducts}</Text>
           </TouchableOpacity>
 
           {/* 4. Orders */}
-          <TouchableOpacity style={styles.tabBarItem} onPress={() => router.push({ pathname: '/orders', params: { lang: selectedLang } })}>
-            <Ionicons name="clipboard-outline" size={24} color="#666666" />
-            <Text style={styles.tabBarLabel}>{t.navOrders}</Text>
+          <TouchableOpacity style={[styles.tabBarItem, styles.tabBarItemActivePill]} onPress={() => setActiveTab('orders')}>
+            <Ionicons name="clipboard" size={24} color="#3B6029" />
+            <Text style={[styles.tabBarLabel, styles.tabBarLabelActive]}>{t.navOrders}</Text>
           </TouchableOpacity>
 
           {/* 5. Profile */}
@@ -362,7 +418,33 @@ const styles = StyleSheet.create({
     color: '#3B6029',
   },
 
-  /* Scrollable Body */
+  /* Filter Tabs Bar */
+  filterTabsBar: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#EBEBEB',
+  },
+  filterTabItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+  },
+  filterTabItemActive: {
+    borderBottomColor: '#3B6029',
+  },
+  filterTabText: {
+    fontSize: 14,
+    color: '#666666',
+  },
+  filterTabTextActive: {
+    color: '#3B6029',
+    fontWeight: 'bold',
+  },
+
+  /* Scrollable Content Body */
   scrollView: {
     flex: 1,
   },
@@ -372,99 +454,66 @@ const styles = StyleSheet.create({
     gap: 14,
   },
 
-  totalCountHeader: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#1A1A1A',
-    marginTop: 2,
-  },
-
-  /* Product List Cards Group */
-  productListGroup: {
+  /* Orders List */
+  ordersListGroup: {
     gap: 12,
   },
-  productCard: {
+  orderCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#EBEBEB',
-    paddingTop: 14,
-    paddingHorizontal: 14,
-    paddingBottom: 6,
+    padding: 14,
   },
-  productMainRow: {
+  orderCardContentRow: {
     flexDirection: 'row',
-    gap: 14,
+    gap: 12,
   },
-  productImage: {
+  orderImage: {
     width: 90,
     height: 90,
     borderRadius: 12,
     backgroundColor: '#F0F0F0',
   },
-  productNameText: {
-    fontSize: 16,
+  orderHeaderMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  orderIdText: {
+    fontSize: 15,
     fontWeight: 'bold',
     color: '#1A1A1A',
   },
-  activeStatusBadge: {
-    backgroundColor: '#F0F7ED',
+  statusBadgePill: {
     borderRadius: 8,
     paddingVertical: 3,
     paddingHorizontal: 10,
   },
-  activeStatusText: {
+  statusBadgeText: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#3B6029',
   },
-  productPriceText: {
-    fontSize: 18,
+  orderMetaItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 2,
+  },
+  orderMetaText: {
+    fontSize: 12,
+    color: '#555555',
+  },
+  orderPriceText: {
+    fontSize: 17,
     fontWeight: 'bold',
     color: '#3B6029',
     marginTop: 6,
   },
-  productStockText: {
-    fontSize: 12,
-    color: '#666666',
-    marginTop: 4,
-  },
 
-  cardDividerLine: {
-    height: 1,
-    backgroundColor: '#F0F0F0',
-    marginTop: 12,
-    marginBottom: 4,
-  },
-
-  /* Bottom Action Bar */
-  cardActionBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingVertical: 8,
-  },
-  cardActionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-    paddingVertical: 4,
-    flex: 1,
-  },
-  cardActionText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#3B6029',
-  },
-  actionDividerLine: {
-    width: 1,
-    height: 18,
-    backgroundColor: '#E0E0E0',
-  },
-
-  /* Outlined Add Product Button */
-  outlinedAddProductBtn: {
+  /* Outlined History Button */
+  outlinedHistoryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -473,9 +522,9 @@ const styles = StyleSheet.create({
     borderColor: '#3B6029',
     borderRadius: 14,
     paddingVertical: 14,
-    marginTop: 6,
+    marginTop: 4,
   },
-  outlinedAddProductBtnText: {
+  outlinedHistoryBtnText: {
     fontSize: 15,
     fontWeight: 'bold',
     color: '#3B6029',
